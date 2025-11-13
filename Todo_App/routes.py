@@ -92,7 +92,7 @@ def register_routes(app, db, bcrypt):
                             token = create_token(user, TokenAction.ACCOUNT_DELETION, True)
                             return redirect(url_for('delete', token=token))  # Just for the testing, in product environment background check must be set
                         else:
-                            remaining = user.token.expire - utc_now_naive()
+                            remaining = record.expire - utc_now_naive()
                             minutes = int(remaining.total_seconds() // 60)
                             seconds = int(remaining.total_seconds() % 60)
                             flash(f"Please verify your email in {minutes} minutes and {seconds} seconds.")

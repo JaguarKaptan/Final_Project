@@ -6,6 +6,8 @@ venv/
 .vscode/
 not.txt
 notes.txt
+Todo_App/instance/myapp.db
+TodoApp/migrations
 
 # Node/NPM Files
 node_modules/
