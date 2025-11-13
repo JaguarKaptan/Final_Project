@@ -1,0 +1,59 @@
+
+/* CSS Variables */
+:root {
+    --background: #0a0e27;
+    /* Main background - Very dark blue */
+    --card-background: #12172e;
+    /* Card/container background - Dark blue */
+    --input-background: #1a2038;
+    /* Input field background - Slightly lighter dark blue */
+
+    --primary: #4fc3f7;
+    /* Primary accent - Turquoise/Cyan */
+    --secondary: #7e57c2;
+    /* Secondary accent - Purple */
+    --accent: #4fc3f7;
+    /* Additional accent - Turquoise */
+
+    --foreground: #e1e8f0;
+    /* Primary text - Light blue-white */
+    --muted-foreground: #8b92a8;
+    /* Secondary text - Muted blue-gray */
+
+    --border: #1f2640;
+    /* Border color - Dark blue-gray */
+    --destructive: #ef5350;
+    /* Error/delete - Red */
+
+    /* Button colors from screenshots */
+    --button-yellow: #ffc107;
+    /* Edit button - Yellow/Amber */
+    --button-blue: #2196f3;
+    /* Delete button - Blue */
+}
+
+// Override Bootstrap variables
+$primary: #4fc3f7; // Turquoise
+$secondary: #12172e; //dark blue  //#7e57c2; // Purple
+$success: #66bb6a; // Green
+$danger: #ef5350; // Red
+$warning: #ffc107; // Yellow/Amber
+$info: #2196f3; // Blue
+//#4fc3f733
+
+$dark: #0a0e27; // Dark background
+$light: #e1e8f0; // Light text
+
+$body-bg: #0a0e27;
+$body-color: #e1e8f0;
+
+$card-bg: #12172e;
+$card-border-color: #1f2640;
+
+$input-bg: #1a2038;
+$input-border-color: #1f2640;
+$input-color: #e1e8f0;
+
+$border-color: #1f2640;
+
+@import "../../node_modules/bootstrap/scss/bootstrap";

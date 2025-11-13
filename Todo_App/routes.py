@@ -496,6 +496,35 @@ def register_routes(app, db, bcrypt):
 
         return jsonify(history_data), 200
     
+# will be done
+    @app.route('/password-change', methods=['GET','POST'])
+    def password_change():
+
+        if request.method == 'POST':
+            username = request.form.get('username')
+
+            user = User.query.filter(or_(User.username == username, User.email == username)).first()
+
+            if not user:
+                flash("Invalid Username or E-mail")
+                return redirect(url_for('login'))
+            
+            create_security_logs(user, SecurityAction.USER_ATTEMPT_RECOVER_ACCOUNT)
+
+            token = create_token(user, TokenAction.ACCOUNT_RECOVERY)
+
+            recover_url = url_for('recover_account', token=token, _external=True)
+
+            send_email(user.email, "Recover your account with", f"Click here to recover: {recover_url}")
+
+            create_security_logs(user, SecurityAction.ACCOUNT_RECOVERY_MAIL_SENT)
+
+            flash("Recovery Mail Has Been Sent!")
+            return redirect(url_for('login'))
+
+        else:
+            flash('Unexpected Error')
+            return redirect(url_for('login'))
     # @app.route('/todo-history')
     # @login_required
     # def todo_history():
