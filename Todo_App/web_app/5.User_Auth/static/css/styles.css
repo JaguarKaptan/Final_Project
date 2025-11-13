@@ -1,0 +1,17 @@
+.done-todo{
+    text-decoration:line-through;
+}
+
+.history-item {
+    transition: background-color 0.2s;
+}
+
+.history-item:hover {
+    background-color: #f0f0f0;
+}
+
+#filter {
+    padding: 5px 10px;
+    font-size: 16px;
+    margin-bottom: 20px;
+}

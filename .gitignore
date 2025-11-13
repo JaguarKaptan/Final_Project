@@ -1,0 +1,10 @@
+# Python/Flask Special Files
+__pycache__/
+*.pyc
+.env
+venv/
+.vscode/
+
+# Node/NPM Files
+node_modules/
+npm-debug.log

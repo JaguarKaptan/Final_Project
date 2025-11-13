@@ -1,0 +1,42 @@
+{%extends "base.html"%}
+{%block title%} Login Page {%endblock%}
+
+{%block content%}
+
+
+
+<div class="container-fluid bg-dark vh-100">
+        <div class="container">
+            <div class="row vh-100 align-items-center justify-content-center">
+                <div class="col-sm-8 col-md-6 col-lg-4 bg-secondary rounded p-4 shadow text-light">
+                    <h1 class="text-center">Login</h1>
+
+                    <form action="{{url_for('login')}}" method="POST">
+                        <div class="mb-4">
+                            <label for="username" class="form-label">Username:</label>
+                            <input type="text" class="form-control" id="username" placeholder="Username" name="username" autocomplete="off">
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="password" class="form-label">Password:</label>
+                            <input type="password" class="form-control" id="password" placeholder="Password" name="password">
+                        </div>
+                        
+                        <div class="mb-4 form-check">
+                            <input type="checkbox" class="form-check-input" id="remember">
+                            <label class="form-check-label" for="remember">Remember Me </label>
+                        </div>
+                        
+                        <input class="btn btn-primary w-100 mb-3" type="submit" value="Login">
+                        <a class="btn btn-success" href="{{url_for('account_recovery')}}">Forgot Password?</a>
+
+                        <a class="btn btn-success" id="signup" href="{{url_for('signup')}}">Don't you have an account?</a>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+</div>
+
+
+{%endblock%}

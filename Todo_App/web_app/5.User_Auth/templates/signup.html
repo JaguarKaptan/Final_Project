@@ -1,0 +1,45 @@
+{%extends "base.html"%}
+{%block title%} Signup Page {%endblock%}
+
+{%block content%}
+
+<div class="container-fluid bg-dark vh-100">
+    <div class="container">
+        <div class="row vh-100 align-items-center justify-content-center">
+            <div class="col-sm-8 col-md-6 col-lg-4 bg-secondary rounded p-4 shadow text-light">
+                <h1 class="text-center">Sign Up</h1>
+
+                <form action="{{url_for('signup')}}" method='POST'>
+                    <div class="mb-4">
+                        <label for="username" class="form-label">Username:</label>
+                        <input type="text" class="form-control" id="username" placeholder="Username" name="username" autocomplete="off" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="email" class="form-label">Username:</label>
+                        <input type="email" class="form-control" id="email" placeholder="E-mail" name="email" autocomplete="off" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label">Password:</label>
+                        <input type="password" class="form-control" id="password" placeholder="Password" name="password" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password-confirm" class="form-label">Password Confirmation:</label>
+                        <input type="password" class="form-control" id="password-confirm" placeholder="Password Again" name="password-confirm" required>
+                    </div>
+
+                    <input class="btn btn-primary w-100 mb-3" type="submit" value="Sign Up">
+                    <label class="form-check-label" for="login">Do you already have an account?</label> <br>
+                    <a class="btn btn-success" id="login" href="{{url_for('login')}}">Login Page</a>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+
+{%endblock%}

@@ -1,0 +1,194 @@
+{%extends "base.html"%}
+{%block title%} Todo History {%endblock%}
+
+{%block content%}
+
+<h1>Note Action History</h1>
+
+<a href="{{url_for('index')}}">My Dashboard</a>
+<a href="{{url_for('todo_page')}}">Back to Todos</a>
+
+<h3>Filter History</h3>
+
+<!-- Dropdown Filter -->
+<label for="filterDropdown">Show:</label>
+<select id="filterDropdown" onchange="filterHistory()">
+    <option value="all">All History</option>
+    <option value="today">Today</option>
+    <option value="week">Last 7 Days</option>
+    <option value="month">Last 30 Days</option>
+    <option value="created">Created Actions</option>
+    <option value="updated">Updated Actions</option>
+    <option value="deleted">Deleted Actions</option>
+</select>
+
+<hr>
+
+<!-- History Container -->
+<div id="history-container">
+    {% if note_history %}
+        {% for history in note_history %}
+        <div class="history-item" style="border: 1px solid black; padding: 10px; margin-bottom: 10px;">
+            <p><strong>Note Title:</strong> {{history.title}}</p>
+            <p><strong>Action:</strong> {{history.action}}</p>
+            <p><strong>Created At:</strong> 
+                <span class="utc-time">{{history.created_at}}</span>
+            </p>
+        </div>
+        {% endfor %}
+    {% else %}
+        <h4>No note history found!</h4>
+    {% endif %}
+</div>
+
+<script>
+    // Convert ALL timestamps to user's local timezone when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        convertAllTimestamps();
+    });
+
+    function convertAllTimestamps() {
+        // Find ALL elements with class 'utc-time'
+        const allTimestamps = document.querySelectorAll('.utc-time');
+        
+        console.log(`Converting ${allTimestamps.length} timestamps...`); // For debugging
+        
+        // Loop through each timestamp and convert it
+        allTimestamps.forEach(element => {
+            const utcTimeString = element.textContent.trim();
+            
+            if (utcTimeString) {
+                const localTime = convertToLocalTime(utcTimeString);
+                element.textContent = localTime;
+            }
+        });
+        
+        console.log('All timestamps converted!'); // For debugging
+    }
+
+    function convertToLocalTime(utcString) {
+        // Your UTC format from database: "2025-10-24 16:12:54.287424"
+        // We need to convert it to JavaScript format: "2025-10-24T16:12:54.287424Z"
+        
+        // Remove microseconds if too long (JavaScript only handles 3 digits for milliseconds)
+        let cleanString = utcString;
+        if (utcString.includes('.')) {
+            const parts = utcString.split('.');
+            const milliseconds = parts[1].substring(0, 3); // Take only first 3 digits
+            cleanString = parts[0] + '.' + milliseconds;
+        }
+        
+        // Convert space to 'T' and add 'Z' for UTC
+        const isoString = cleanString.replace(' ', 'T') + 'Z';
+        
+        // Create date object (automatically converts to user's timezone)
+        const date = new Date(isoString);
+        
+        // Check if valid date
+        if (isNaN(date.getTime())) {
+            console.error('Invalid date:', utcString);
+            return utcString; // Return original if conversion fails
+        }
+        
+        // Format options - NO timezone specified = uses user's local timezone automatically!
+        const options = {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: true
+        };
+        
+        // Convert to user's LOCAL timezone (browser automatically detects it!)
+        // If user is in Turkey: shows Turkish time
+        // If user is in USA: shows USA time
+        // If user is in Japan: shows Japan time
+        return date.toLocaleString(undefined, options);
+        // 'undefined' means "use the user's browser language and timezone"
+        // Example output in Turkey: "24 Ekim 2025 19:12:54"
+        // Example output in USA: "October 24, 2025, 7:12:54 PM"
+    }
+
+    function filterHistory() {
+        // Step 1: Get the selected value from dropdown
+        const filterValue = document.getElementById('filterDropdown').value;
+        
+        console.log('Filter selected:', filterValue); // For debugging
+        
+        // Step 2: Get the container where we'll show results
+        const container = document.getElementById('history-container');
+        
+        // Step 3: Show loading message while fetching
+        container.innerHTML = '<p>Loading...</p>';
+        
+        // Step 4: Fetch filtered data from your API
+        fetch(`/api/todo-history?filter=${filterValue}`)
+            .then(response => {
+                console.log('Response status:', response.status); // For debugging
+                
+                // Check if request was successful
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                
+                // Convert response to JSON
+                return response.json();
+            })
+            .then(data => {
+                console.log('Received data:', data); // For debugging
+                
+                // Step 5: Check if we got any results
+                if (data.length === 0) {
+                    container.innerHTML = '<h4>No history found for this filter!</h4>';
+                    return;
+                }
+                
+                // Step 6: Build HTML for all history items
+                let html = '';
+                data.forEach(history => {
+                    html += `
+                        <div class="history-item" style="border: 1px solid black; padding: 10px; margin-bottom: 10px;">
+                            <p><strong>Note Title:</strong> ${history.title}</p>
+                            <p><strong>Action:</strong> ${history.action}</p>
+                            <p><strong>Created At:</strong> 
+                                <span class="utc-time">${history.created_at}</span>
+                            </p>
+                        </div>
+                    `;
+                });
+                
+                // Step 7: Put the HTML into the container
+                container.innerHTML = html;
+                
+                // Step 8: IMPORTANT! Convert all the new timestamps
+                convertAllTimestamps();
+                
+                console.log('Filtering complete!'); // For debugging
+            })
+            .catch(error => {
+                // Step 9: Handle any errors
+                console.error('Error:', error);
+                container.innerHTML = '<p style="color: red;">Error loading history. Please try again.</p>';
+            });
+    }
+</script>
+
+<style>
+    .history-item {
+        transition: background-color 0.2s;
+    }
+    
+    .history-item:hover {
+        background-color: #f0f0f0;
+    }
+    
+    #filter {
+        padding: 5px 10px;
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+</style>
+
+{%endblock%}

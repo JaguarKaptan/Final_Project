@@ -1,0 +1,56 @@
+from flask import Flask, redirect, url_for
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from flask_login import LoginManager
+from flask_bcrypt import Bcrypt
+from flask_mail import Mail
+
+db = SQLAlchemy()
+mail = Mail()
+
+def create_app():
+    app = Flask(__name__, template_folder='templates')
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./myapp.db'
+
+    app.config["SESSION_PERMANENT"] = True
+    app.config["SESSION_TYPE"] = "filesystem"
+
+    # Mail Configuration
+    app.config['MAIL_SERVER'] = 'localhost'
+    app.config['MAIL_PORT'] = 8025  # test server port
+    app.config['MAIL_SUPPRESS_SEND'] = False 
+    app.config['MAIL_DEFAULT_SENDER'] = ('Test Bot', 'test@example.com')
+
+    mail.init_app(app)
+
+    # will be moved to the .env
+    app.secret_key = '0pp1jGIWBg6QunveBvqyU9vMElA4H0gWjryr_GoTKFc' # will be moved to the .env
+
+    #Initialize the database
+    db.init_app(app)
+
+    #Initialize the login manager for the session management
+    login_manager = LoginManager()
+    login_manager.init_app(app)
+
+    from models import User
+
+    @login_manager.user_loader
+    def load_user(uid):
+        return User.query.get(uid)
+    
+    @login_manager.unauthorized_handler
+    def unauthorized_callback():
+        return redirect(url_for('login'))
+    
+    # Redirect to to the login page if user is no loged in
+    login_manager.login_view = "login"
+
+    bcrypt = Bcrypt(app)
+
+    from routes import register_routes
+    register_routes(app, db, bcrypt)
+
+    migrate = Migrate(app, db)
+
+    return app

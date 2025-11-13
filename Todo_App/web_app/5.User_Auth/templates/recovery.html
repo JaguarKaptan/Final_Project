@@ -1,0 +1,36 @@
+{%extends "base.html"%}
+{%block title%} Recovery Page {%endblock%}
+
+{%block content%}
+
+
+<div class="container-fluid bg-dark vh-100">
+    <div class="container">
+        <div class="row vh-100 align-items-center justify-content-center">
+            <div class="col-sm-8 col-md-6 col-lg-4 bg-secondary rounded p-4 shadow text-light">
+                <h1 class="text-center">Forgot password? Don't worry!</h1>
+
+                <form action="{{url_for('send_recovery')}}" method="POST">
+                   
+                    <div class="mb-4">
+                        <label for="username" class="form-label">Help us to find your account:</label>
+                        <input type="text" class="form-control" id="username" placeholder="Username or Email" name="username" autocomplete="off">
+                    </div>
+
+                    <input class="btn btn-primary w-100 mb-3" type="submit" value="Send Recovery Mail">
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- <h1>Recovery Page</h1>
+<h2>Forgot password? Don't worry!</h2>
+
+<form action="{{url_for('send_recovery')}}" method="POST">
+    <input type="text" name="username" placeholder="Username or Email"><br>
+    <input type="submit" value="Send Recovery Mail"> <br>
+</form> -->
+
+{%endblock%}

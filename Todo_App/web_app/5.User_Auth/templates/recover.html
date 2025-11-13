@@ -1,0 +1,45 @@
+{%extends "base.html"%}
+{%block title%} Recover Page {%endblock%}
+
+{%block content%}
+
+<div class="container-fluid bg-dark vh-100">
+    <div class="container">
+        <div class="row vh-100 align-items-center justify-content-center">
+            <div class="col-sm-8 col-md-6 col-lg-4 bg-secondary rounded p-4 shadow text-light">
+                <h1 class="text-center">Recover Account</h1>
+
+                <form action="{{url_for('change_password')}}" method='POST'>
+                        <input type="hidden" name="auth" value="{{ auth }}">
+
+                    <div class="mb-4">
+                        <label for="password" class="form-label">Password:</label>
+                        <input type="password" class="form-control" id="password" placeholder="Password" name="password"
+                            required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="password-confirm" class="form-label">Password Confirmation:</label>
+                        <input type="password" class="form-control" id="password-confirm" placeholder="Password Again"
+                            name="password-confirm" required>
+                    </div>
+
+                    <input class="btn btn-primary w-100 mb-3" type="submit" value="Change Password">
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 
+<h1>Recover Page</h1>
+
+    <form action="{{url_for('change_password')}}" method='POST'>
+        <input type="hidden" name="auth" value="{{ auth }}">
+        <input type="password" name="password" placeholder="Password" required> <br>
+        <input type="password" name="password-confirm" placeholder="Password Again" required> <br>
+        <input type="submit" value="Change Password">
+    </form> -->
+
+{%endblock%}
