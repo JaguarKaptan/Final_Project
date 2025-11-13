@@ -7,7 +7,7 @@ venv/
 not.txt
 notes.txt
 Todo_App/instance/myapp.db
-TodoApp/migrations
+Todo_App/migrations
 
 # Node/NPM Files
 node_modules/
