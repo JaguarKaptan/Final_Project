@@ -4,6 +4,8 @@ __pycache__/
 .env
 venv/
 .vscode/
+not.txt
+notes.txt
 
 # Node/NPM Files
 node_modules/
