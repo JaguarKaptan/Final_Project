@@ -327,7 +327,7 @@ def register_routes(app, db, bcrypt):
             new_note = Notes(owner_id = current_user.user_id, title=title, content=content, tags=tags)
             db.session.add(new_note)
             db.session.commit()
-            new_action = Note_History(note_id = new_note.id, title=title, action=NoteAction.NOTE_CREATED.value)
+            new_action = Note_History(note_id = new_note.id, user_id = current_user.user_id ,title=title, action=NoteAction.NOTE_CREATED.value)
             db.session.add(new_action)
             db.session.commit()
 
@@ -399,7 +399,7 @@ def register_routes(app, db, bcrypt):
                     if key == 'done':
                         original_value = 'DONE' if original_value else 'IN PROGRESS'
                         new_value = 'DONE' if new_value else 'IN PROGRESS'
-                        action = f"{key.capitalize()} is changed from {original_value}>> to <{new_value}"
+                        action = f"{key.capitalize()} is changed from {original_value}>> to {new_value}"
                     elif key == 'content' and len(str(original_value)) > 10:
                         action = f"{key.capitalize()} area has been updated!"
                     else:
@@ -502,29 +502,43 @@ def register_routes(app, db, bcrypt):
 
         if request.method == 'POST':
             username = request.form.get('username')
+            auth = request.form.get('auth')
+            password = request.form.get('password')
+            confirm = request.form.get('password-confirm')
 
-            user = User.query.filter(or_(User.username == username, User.email == username)).first()
+            if not password == confirm:
+                flash("Passwords do not match")
+                return redirect(request.referrer)
+            if not username == current_user.username:
+                flash("Unauthorized Action")
+                return redirect(request.referrer)
+            
+            user = User.query.filter(or_(User.username == username)).first()
 
             if not user:
-                flash("Invalid Username or E-mail")
-                return redirect(url_for('login'))
+                flash("Invalid Username")
+                return redirect(request.referrer)
             
-            create_security_logs(user, SecurityAction.USER_ATTEMPT_RECOVER_ACCOUNT)
+            create_security_logs(user, SecurityAction.USER_ATTEMPT_PASSWORD_CHANGE)
 
-            token = create_token(user, TokenAction.ACCOUNT_RECOVERY)
+            token = create_token(user, TokenAction.PASSWORD_CHANGE)
+            record, error = validate_token(token,TokenAction.PASSWORD_CHANGE)
 
-            recover_url = url_for('recover_account', token=token, _external=True)
+            if error:
+                flash(error)
+                return redirect(request.referrer)
 
-            send_email(user.email, "Recover your account with", f"Click here to recover: {recover_url}")
-
-            create_security_logs(user, SecurityAction.ACCOUNT_RECOVERY_MAIL_SENT)
-
-            flash("Recovery Mail Has Been Sent!")
-            return redirect(url_for('login'))
+            user.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+            db.session.delete(record)
+            db.session.commit()
+            create_security_logs(user, SecurityAction.PASSWORD_CHANGED)
+            flash("Password has been changed successfully!")
+            return redirect(request.referrer)
 
         else:
             flash('Unexpected Error')
-            return redirect(url_for('login'))
+            return redirect(request.referrer)
+        
     # @app.route('/todo-history')
     # @login_required
     # def todo_history():

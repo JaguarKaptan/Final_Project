@@ -11,6 +11,7 @@ class SecurityAction(Enum):
     USER_ATTEMPT_DELETE_ACCOUNT = "account_deletion_attemp"
     USER_ATTEMPT_RECOVER_ACCOUNT = "account_recovery_attempt"
     ACCOUNT_RECOVERY_MAIL_SENT = "account_recovery_mail_sent"
+    USER_ATTEMPT_PASSWORD_CHANGE = "password_change_attempt"
     PASSWORD_CHANGED = "password_changed"
 
 class TokenAction(Enum):
