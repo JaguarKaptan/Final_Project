@@ -53,12 +53,7 @@
                             
                             {%endif%}
                             <small class="text-body-secondary">{{ current_user.email }}</small>
-<!--                              
-                            {% if current_user.email_verified == True%}
-                            <small class="text-body-secondary">{{current_user.email}} <span class=" badge rounded-pill text-bg-primary">Verified</span> </small>
-                            {% else %}
-                            <small class="text-body-secondary">{{current_user.email}} <span class="badge rounded-pill text-bg-danger ">Not Verified</span> </small>
-                            {%endif%} -->
+
                             
                         </div>
                 
@@ -118,31 +113,7 @@
                 </div>
             </div>
 
-                    <!-- {% if current_user.email_verified == True%}
-                    <h3>E-mail: {{current_user.email}} <span class=" badge rounded-pill text-bg-primary fs-6">Verified</span> </h3>
-                    {% else %}
-                    <h3>E-mail: {{current_user.email}} <span class="badge rounded-pill text-bg-danger fs-6">Not Verified</span> </h3>
-                    {%endif%}
-                    
-                    <h3>Public ID: {{current_user.public_id}}</h3>
-                    <h4><strong>Account Created At: <span class="utc-time">{{current_user.created_at}}</span></strong></h4>
-                    {% else %}
-                    <h3>Hello!</h3>
-                    {% endif %} -->
-                
-            
         
-        
-
-            
-
-
-    <!-- <a href="{{url_for('login')}}">Login</a> -->
-    <!-- <a href="{{url_for('signup')}}">Sign Up</a> -->
-    <!-- <a href="{{url_for('logout')}}">Logout</a> -->
-    <!-- <a href="{{url_for('delete_confirm')}}">Delete Account</a> -->
-    <!-- <a href="{{url_for('todo_page')}}">My Todo List</a> -->
-    <!-- <a href="{{url_for('todo_page')}}">Change Password</a> -->
 
     <script>
 
@@ -170,7 +141,7 @@
             }
 
             function convertToLocalTime(utcString) {
-                // Your UTC format from database: "2025-10-24 16:12:54.287424"
+                // UTC format from database: "2025-10-24 16:12:54.287424"
                 // We need to convert it to JavaScript format: "2025-10-24T16:12:54.287424Z"
 
                 // Remove microseconds if too long (JavaScript only handles 3 digits for milliseconds)

@@ -11,22 +11,7 @@
     
     <h3>Note Action History</h3>
 
-    <!-- {% if current_user.owned_notes %}
-        {% for history in notes %}
-            
-            <div style="border: 1px solid black;">
-                <p>Note Title: {{history.title}}</p>
-                <p>Action: {{history.action}}</p>
-                <p>Created AT: {{history.created_at}}</p>
-            </div>
-            <br>
-           
-        {% endfor %}
-    {% else %}
-        <h4>You don't have any notes!</h4>
-    {% endif %} -->
     
-
     <!-- Dropdown Filter -->
     <label for="filter">Filter by:</label>
     <select id="filter" onchange="filterHistory()">
@@ -96,7 +81,7 @@
                 }
 
                 function convertToLocalTime(utcString) {
-                    // Your UTC format from database: "2025-10-24 16:12:54.287424"
+                    // UTC format from database: "2025-10-24 16:12:54.287424"
                     // We need to convert it to JavaScript format: "2025-10-24T16:12:54.287424Z"
 
                     // Remove microseconds if too long (JavaScript only handles 3 digits for milliseconds)

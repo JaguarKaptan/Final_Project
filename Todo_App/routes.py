@@ -130,14 +130,7 @@ def register_routes(app, db, bcrypt):
     @app.route('/delete/<token>')
     def delete(token):
 
-        # record = Token.query.filter_by(token=token).first()
-        # if not record or not record.type == TokenAction.ACCOUNT_DELETION.value:
-        #     flash("Invalid Token")
-        #     return redirect(url_for('login'))
-        
-        # if record.expire < utc_now_naive():
-        #     flash("Unexpectd Error")
-        #     return redirect(url_for("login"))
+
         
         record, error = validate_token(token,TokenAction.ACCOUNT_DELETION)
 
@@ -193,7 +186,6 @@ def register_routes(app, db, bcrypt):
     @app.route('/recover/<token>')
     def recover_account(token):
 
-        #record = Token.query.filter_by(token=token).first()
 
         record, error = validate_token(token,TokenAction.ACCOUNT_RECOVERY)
 
@@ -201,15 +193,6 @@ def register_routes(app, db, bcrypt):
             flash(error)
             return redirect(url_for('login'))
 
-        # if not record or not record.type == TokenAction.ACCOUNT_RECOVERY.value:
-        #     flash("Invalid Recovery Link.")
-        #     return redirect(url_for('login'))
-
-
-        # if record.expire < utc_now_naive():
-        #     #Token expired!
-        #     flash("Recovery code has been expired.")
-        #     return redirect(url_for('login'))
         
      
 
@@ -222,7 +205,7 @@ def register_routes(app, db, bcrypt):
         password = request.form.get('password')
         confirm = request.form.get('password-confirm')
 
-        # record = Token.query.filter_by(token=token).first()
+ 
 
         record, error = validate_token(token,TokenAction.ACCOUNT_RECOVERY)
 
@@ -230,13 +213,7 @@ def register_routes(app, db, bcrypt):
             flash(error)
             return redirect(url_for('login'))
 
-        # if not record or not record.type == TokenAction.ACCOUNT_RECOVERY.value:
-        #     flash("Invalid Token")
-        #     return redirect(url_for('login'))
-        
-        # if record.expire < utc_now_naive():
-        #     flash("Recovery code has been expired.")
-        #     return redirect(url_for("login"))
+       
         
         if not password == confirm:
             flash("Passwords do not match")
@@ -262,15 +239,10 @@ def register_routes(app, db, bcrypt):
     @app.route('/verify')
     def verify_notice():
         return "Verification e-mail has been sent, please verify your email in an hour! Otherwise your account will be deleted!"
-        #return render_template('verify.html')
+   
 
     @app.route('/verify/<token>')
     def verify_mail(token):
-
-        # record = Token.query.filter_by(token=token).first()
-        # if not record or not record.type == TokenAction.EMAIL_VERIFICATION.value:
-        #     flash("Invalid Verification Link.")
-        #     return redirect(url_for('login'))
 
         record, error = validate_token(token,TokenAction.EMAIL_VERIFICATION)
         
@@ -285,14 +257,6 @@ def register_routes(app, db, bcrypt):
             return redirect(url_for('login'))
 
        
-
-        # if record.expire < utc_now_naive():
-        #     #Token expired!
-        #     flash("Verification code has been expired.")
-        #     token = create_token(user, TokenAction.ACCOUNT_DELETION, True)
-        #     return redirect(url_for('delete', token=token))  # Just for the testing, in product environment background check must be set
-        
-
         #Successful Verification
 
         user = record.user
@@ -413,8 +377,7 @@ def register_routes(app, db, bcrypt):
                 db.session.add(new_action)
 
             db.session.commit()
-            #flash("Note updated successfully!")
-            #return '', 200
+            
 
             return jsonify({'message': 'Note status updated successfully'}), 200
         
@@ -434,17 +397,15 @@ def register_routes(app, db, bcrypt):
     @app.route('/api/todo-history', methods=['GET'])
     @login_required
     def api_todo_history():
-        # 1. Sorgu Parametresini Yakalama
-        filter_value = request.args.get('filter', 'all') # 'all' varsayılan değer
+       
+        filter_value = request.args.get('filter', 'all') 
         sort_value = request.args.get('sort', 'desc')
         
-        # Başlangıç sorgusu: Kullanıcıya ait tüm geçmiş kayıtları
-        # Not: Note_History modelinde user_id filtresi artık olmazsa olmaz.
+        
         query = Note_History.query.filter(Note_History.user_id == current_user.user_id)
         
-        # 2. Dinamik Filtreleme Mantığı
-        
-        # Aksiyon Bazlı Filtreler (Dropdown'dan gelen 'created', 'updated', 'deleted' vs.)
+     
+       
         if filter_value == 'created':
             query = query.filter(Note_History.action.like('%CREATED%'))
         elif filter_value == 'updated':
@@ -452,45 +413,40 @@ def register_routes(app, db, bcrypt):
         elif filter_value == 'deleted':
             query = query.filter(Note_History.action.like('%DELETED%'))
             
-        # Tarih Bazlı Filtreler (Dropdown'dan gelen 'today', 'week', 'month')
+       
         elif filter_value == 'today':
-            # Yalnızca bugünün başlangıcından sonrasını al
+          
             start_of_day = datetime.combine(utc_now_naive().date(), datetime.min.time())
             query = query.filter(Note_History.created_at >= start_of_day)
         elif filter_value == 'week':
-            # Son 7 gün
+            
             one_week_ago = utc_now_naive() - timedelta(days=7)
             query = query.filter(Note_History.created_at >= one_week_ago)
         elif filter_value == 'month':
-            # Son 30 gün
+           
             one_month_ago = utc_now_naive() - timedelta(days=30)
             query = query.filter(Note_History.created_at >= one_month_ago)
 
-        # 'all' durumu için ekstra filtreye gerek yok, başlangıç sorgusu yeterli.
+     
         if sort_value == 'asc':
-            # Artan sıralama (En Eski Önce)
+            
             query = query.order_by(Note_History.created_at.asc())
-        else: # Varsayılan olarak veya 'desc' gelirse
-            # Azalan sıralama (En Yeni Önce)
+        else: 
             query = query.order_by(Note_History.created_at.desc())
         
-        # 3. Sıralama ve Sonuçları Alma
-        # Her zaman tarihe göre azalan sırada (en yeni üstte) sırala
-        # all_history_records = query.order_by(
-        #     desc(Note_History.created_at)
-        # ).all() 
+     
 
 
         all_history_records = query.all() 
 
-        # 4. JSON Verisi Hazırlama
+       
         history_data = []
         for record in all_history_records:
             history_data.append({
                 'note_id': record.note_id,
                 'title': record.title,
                 'action': record.action,
-                # JS'in anlayacağı bir formatta gönderin
+              
                 'created_at': record.created_at.isoformat() 
             })
 
@@ -539,29 +495,4 @@ def register_routes(app, db, bcrypt):
             flash('Unexpected Error')
             return redirect(request.referrer)
         
-    # @app.route('/todo-history')
-    # @login_required
-    # def todo_history():
-    #     notes = Notes.query.filter(Notes.owner == current_user).all()
-    #     #note_history = Note_History.query.filter(Note_History.note_id == notes.note_id).all()
-    #     return render_template('todo_history.html', notes=notes)
-
-        
-    # @app.route('/todo-edit/<note_id>', methods=['POST'])
-    # def todo_edit(note_id):
-
-    #     if request.method == 'POST':
-    #         note = Notes.query.get(note_id)
-            
-    #         if not note or note.owner != current_user:
-    #             flash("Note not found or unauthorized!")
-    #             return redirect(url_for('todo_page'))
-
-    #         db.session.delete(note)
-    #         db.session.commit()
-    #         flash("Note deleted successfully!!")
-    
-    #     else:
-    #         flash("Unexpected Error!")
-    #     return render_template('todo_page.html')
         
