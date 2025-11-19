@@ -56,4 +56,23 @@ $input-color: #e1e8f0;
 
 $border-color: #1f2640;
 
+
+.form-control[readonly],
+.form-control:disabled {
+    background-color: $input-bg !important;
+    color: $input-color !important;
+    border: 1px solid $input-border-color !important; 
+    opacity: 1 !important; 
+    cursor: not-allowed; 
+    box-shadow: none;
+}
+
+.form-control[readonly]:focus,
+.form-control:disabled:focus {
+    background-color: $input-bg !important;
+    color: $input-color !important;
+    border-color: $primary !important; // tema primary ile focus glow
+}
+
+
 @import "../../node_modules/bootstrap/scss/bootstrap";

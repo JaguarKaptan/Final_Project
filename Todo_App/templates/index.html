@@ -6,29 +6,143 @@
 
     {% if current_user.is_authenticated %}
 
-        <h1>My Dashboard</h1>
-        <h3>Hello, {{ current_user.username }} </h3>
+        <div class="container pt-3 m-2">
+            <div class="row">
+                <div class="col">
+                    <h3>My Dashboard</h3>
+                    <h5>Welcome back, {{ current_user.username }}!</h5>
+                </div>
+            </div>
+        </div>
+
         
-        {% if current_user.email_verified == True%}
-           <h3>E-mail: {{current_user.email}} <span class=" badge rounded-pill text-bg-primary fs-6">Verified</span> </h3> 
-        {% else %}
-            <h3>E-mail: {{current_user.email}} <span class="badge rounded-pill text-bg-danger fs-6">Not Verified</span> </h3>
-        {%endif%}
+
+        <div class="container-fluid">
+            <div class="row g-2 p-2 rounded-3 justify-content-between align-items-center">
         
-        <h3>Public ID: {{current_user.public_id}}</h3>
-        <!-- <h4 class="utc-time">Account Created At: {{current_user.created_at}}</h4> -->
-        <h4><strong>Account Created At: <span class="utc-time">{{current_user.created_at}}</span></strong></h4>
+                <div class="col-12 col-sm-5 col-xl-2 bg-secondary rounded-3 border border-info py-3">
+                    <div class="col bg-secondary rounded-3 p-3 d-flex justify-content-start align-items-center">
+                        
+                        <div class="me-2">
+                            <i class="bi bi-person px-2 py-1 rounded-2 align-middle fs-4 profile-logo"></i>
+                        </div>
+        
+                        <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0">Username</h6>
+                            <small class="text-body-secondary">{{ current_user.username }}</small>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-5 col-xl-2 bg-secondary rounded-3 border border-info py-3">
+                    <div class="col bg-secondary rounded-3 p-3 d-flex justify-content-start align-items-center">
+                
+                        <div class="me-2">
+                            <i class="bi bi-envelope px-2 py-1 rounded-2 align-middle fs-4 mail-logo"></i>
+                        </div>
+                
+                        <div class="d-flex flex-column justify-content-center">
+                           
+                            
+                            {% if current_user.email_verified == True%}
+                            <h6 class="mb-0">Mail <small><span class=" badge rounded-pill text-bg-primary">Verified</span></small> </h6>
+                             
+                            {% else %}
+                            <h6 class="mb-0">Mail <small><span class="badge rounded-pill text-bg-danger ">Unverified</span></small></h6>
+                            
+                            {%endif%}
+                            <small class="text-body-secondary">{{ current_user.email }}</small>
+<!--                              
+                            {% if current_user.email_verified == True%}
+                            <small class="text-body-secondary">{{current_user.email}} <span class=" badge rounded-pill text-bg-primary">Verified</span> </small>
+                            {% else %}
+                            <small class="text-body-secondary">{{current_user.email}} <span class="badge rounded-pill text-bg-danger ">Not Verified</span> </small>
+                            {%endif%} -->
+                            
+                        </div>
+                
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-5 col-xl-2 bg-secondary rounded-3 border border-info py-3">
+                    <div class="col bg-secondary rounded-3 p-3 d-flex justify-content-start align-items-center">
+                
+                        <div class="me-2">
+                            <i class="bi bi-hash px-2 py-1 rounded-2 align-middle fs-4 public-id-logo"></i>
+                        </div>
+                
+                        <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0">Public Id</h6>
+                            <small class="text-body-secondary">{{ current_user.public_id }}</small>
+                        </div>
+                
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-5 col-xl-2 bg-secondary rounded-3 border border-info py-3">
+                    <div class="col bg-secondary rounded-3 p-3 d-flex justify-content-start align-items-center">
+                
+                        <div class="me-2">
+                            <i class="bi bi-calendar px-2 py-1 rounded-2 align-middle fs-4 profile-logo"></i>
+                        </div>
+                
+                        <div class="d-flex flex-column justify-content-center">
+                            <h6 class="mb-0">Creation Date</h6>
+                            <small class="text-body-secondary utc-time">{{ current_user.created_at }}</small>
+                        </div>
+                
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+
+            <div class="container-fluid">
+                <div class="row g-2 p-2 rounded-3">
+                    <h6 class="mb-0">Quick Actions</h6>
+                    <div class="col bg-secondary rounded-3 border border-info py-3">
+                        <div class="row">
+                            
+                            <div class="col-6 rounded-3 p-3 d-flex justify-content-around align-items-center">
+                                <a class="btn btn-primary" href="{{url_for('todo_page')}}" role="button"><i class="bi bi-ui-checks-grid fs-5 me-2"></i> Go to Todo List</a>
+                                <a class="btn btn-primary" href="{{url_for('todo_history')}}" role="button"><i class="bi bi-clock-history fs-5 me-2"></i> Go to Todo History</a>
+                                <a class="btn btn-primary text-white view-profile" data-bs-toggle="modal" data-bs-target="#staticBackdrop" href="#" role="button" ><i class="bi bi-person-fill fs-5 me-2"></i> View Profile</a>
+                                
+                            </div>
+
+                        </div>
+                    </div>  
+        
+                </div>
+            </div>
+
+                    <!-- {% if current_user.email_verified == True%}
+                    <h3>E-mail: {{current_user.email}} <span class=" badge rounded-pill text-bg-primary fs-6">Verified</span> </h3>
+                    {% else %}
+                    <h3>E-mail: {{current_user.email}} <span class="badge rounded-pill text-bg-danger fs-6">Not Verified</span> </h3>
+                    {%endif%}
+                    
+                    <h3>Public ID: {{current_user.public_id}}</h3>
+                    <h4><strong>Account Created At: <span class="utc-time">{{current_user.created_at}}</span></strong></h4>
+                    {% else %}
+                    <h3>Hello!</h3>
+                    {% endif %} -->
+                
             
-    {% else %}
-         <h3>Hello!</h3>
-    {% endif %}
+        
+        
+
+            
+
 
     <!-- <a href="{{url_for('login')}}">Login</a> -->
     <!-- <a href="{{url_for('signup')}}">Sign Up</a> -->
     <!-- <a href="{{url_for('logout')}}">Logout</a> -->
-    <a href="{{url_for('delete_confirm')}}">Delete Account</a>
+    <!-- <a href="{{url_for('delete_confirm')}}">Delete Account</a> -->
     <!-- <a href="{{url_for('todo_page')}}">My Todo List</a> -->
-    <a href="{{url_for('todo_page')}}">Change Password</a>
+    <!-- <a href="{{url_for('todo_page')}}">Change Password</a> -->
 
     <script>
 
@@ -82,17 +196,17 @@
                 // Format options - NO timezone specified = uses user's local timezone automatically!
                 const options = {
                     year: 'numeric',
-                    month: 'long',
+                    month: '2-digit', //short
                     day: 'numeric',
                     hour: '2-digit',
                     minute: '2-digit',
-                    second: '2-digit',
+                    //second: '2-digit',
                     hour12: false
                 };
 
                 // Convert to user's LOCAL timezone (browser automatically detects it!)
-
-                return date.toLocaleString(undefined, options);
+                //undefined
+                return date.toLocaleString('en-UK', options);
 
             }
 

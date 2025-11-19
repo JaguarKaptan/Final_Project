@@ -66,3 +66,39 @@
     transform-origin: center center;
     vertical-align: middle;
 }
+
+.notevergent-logo{
+    color: #7e57c2 !important;
+    display: inline-block;
+    transform: scale(1.3) translateY(-2px);
+    transform-origin: center center;
+    vertical-align: middle;
+}
+
+.dashboard-logo{
+    color: #ffc107 !important;
+}
+
+.todo-logo{
+    color: #4caf50 !important;
+}
+
+.profile-logo{
+    background-color: #336b856a; 
+    color:#4fc3f7;
+}
+
+.public-id-logo {
+    background-color: #336b856a;
+     color:#66bb6a;
+}
+
+.mail-logo {
+    background-color: #754ac040; 
+    color:#7e57c2;
+}
+
+.view-profile{
+    background-color: #0d112b; 
+    border-color:#222c65;
+}
