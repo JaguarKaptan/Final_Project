@@ -36,7 +36,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                <ul class="navbar-nav">
+                <ul class="navbar-nav" id="main-nav">
                     <li class="nav-item">
                         <a class="nav-link" aria-current="page" href="{{url_for('index')}}"><i class="bi bi-clipboard-data dashboard-logo fs-5"></i> My Dashboard</a>
                     </li>
@@ -209,7 +209,7 @@
                                 </div>
                             </div>
                         </div>
-                    {% endif %}
+                   
 
                 </div>
                 <div class="modal-footer">
@@ -230,7 +230,35 @@
     </script>
 
     <script>    
-    
+        
+     
+        document.addEventListener("DOMContentLoaded", () => {
+                const nav = document.getElementById("main-nav");
+
+                // clear if on index page
+                if (window.location.pathname === "{{ url_for('index') }}") {
+                    const extraBtn = document.getElementById("extra-todo-btn");
+                    if (extraBtn) extraBtn.remove();
+                    return;
+                }
+
+                // add extra button on todo pages
+                if (window.location.pathname === "{{ url_for('todo_page') }}" || window.location.pathname === "{{ url_for('todo_history') }}") {
+                    // if already added, do not add again
+                    if (document.getElementById("extra-todo-btn")) return;
+
+                    const li = document.createElement("li");
+                    li.className = "nav-item";
+                    li.id = "extra-todo-btn";
+                    li.innerHTML = `
+            <a class="nav-link" href="{{ url_for('todo_history') }}">
+                <i class="bi bi-clock-history fs-5 todo-history-logo"></i> Action History
+            </a>`;
+                    nav.appendChild(li);
+                }
+            });
+
+
         // will be done in the future
 
         function createToken(id) {

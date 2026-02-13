@@ -83,6 +83,10 @@
     color: #4caf50 !important;
 }
 
+.todo-history-logo{
+    color: #7e57c2 !important;
+}
+
 .profile-logo{
     background-color: #336b856a; 
     color:#4fc3f7;
@@ -101,4 +105,22 @@
 .view-profile{
     background-color: #0d112b; 
     border-color:#222c65;
+}
+
+.note-preview {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.note-content {
+    min-width: 0;
+    flex: 1;
+}
+
+.notes .form-check-input {
+    width: 1.3rem;
+    height: 1.3rem;
 }

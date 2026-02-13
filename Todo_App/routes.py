@@ -276,8 +276,33 @@ def register_routes(app, db, bcrypt):
     @login_required
     def todo_page():
 
-        notes = Notes.query.filter(Notes.owner == current_user).all()
-        return render_template('todo_page.html', notes=notes)
+        # notes = Notes.query.filter(Notes.owner == current_user).all()
+        # return render_template('todo_page.html', notes=notes)
+
+        # all_notes = Notes.query.filter(Notes.owner == current_user).order_by(desc(Notes.updated_at)).all()
+
+        # in_progress = [n for n in all_notes if not n.done]
+        # completed = [n for n in all_notes if n.done]
+
+        in_progress = (
+        Notes.query
+        .filter(Notes.owner == current_user, Notes.done == False)
+        .order_by(desc(Notes.updated_at))
+        .all()
+        )
+
+        completed = (
+            Notes.query
+            .filter(Notes.owner == current_user, Notes.done == True)
+            .order_by(desc(Notes.updated_at))
+            .all()
+        )
+
+        return render_template(
+            'todo_page.html',
+            in_progress=in_progress,
+            completed=completed
+        )
     
     @app.route('/todo-create', methods=['POST'])
     @login_required
@@ -309,17 +334,25 @@ def register_routes(app, db, bcrypt):
             note = Notes.query.get(note_id)
             
             if not note or note.owner != current_user:
-                flash("Note not found or unauthorized!")
-                return redirect(url_for('todo_page'))
+                # flash("Note not found or unauthorized!")
+                # return redirect(url_for('todo_page'))
+                return {"message": "Note not found or unauthorized!"}, 404
 
+            note_id_value = note.id
+            note_title_value = note.title
+
+            # db.session.delete(note)
+            # db.session.commit()
+            #new_action = Note_History(note_id = note.id, title=note.title, action=NoteAction.NOTE_DELETED.value)
+            new_action = Note_History(note_id = note_id_value , user_id=current_user.user_id, title=note_title_value, action=NoteAction.NOTE_DELETED.value)
+            db.session.add(new_action)
             db.session.delete(note)
             db.session.commit()
-            new_action = Note_History(note_id = note.id, title=note.title, action=NoteAction.NOTE_DELETED.value)
-            db.session.add(new_action)
-            db.session.commit()
 
-            flash("Note deleted successfully!!")
-            return '', 200
+            
+            return {"message": "Note deleted successfully"}, 200
+            # flash("Note deleted successfully!!")
+            # return '', 200
         
         else:
             flash("Unexpected Error!")
@@ -378,8 +411,15 @@ def register_routes(app, db, bcrypt):
 
             db.session.commit()
             
-
-            return jsonify({'message': 'Note status updated successfully'}), 200
+            return jsonify({
+                "message": "Note updated successfully",
+                "id": note.id,
+                "title": note.title,
+                "content": note.content,
+                "tags": note.tags,
+                "done": note.done
+            }), 200
+            #return jsonify({'message': 'Note status updated successfully'}), 200
         
         else:
             flash("Unexpected Error!")

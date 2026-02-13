@@ -1,0 +1,139 @@
+
+    {%extends "base.html"%}
+    {%block title%} Todo Page {%endblock%}
+
+    {%block content%}
+
+    <h1>Your Todo List</h1>
+
+    {% if current_user.is_authenticated %}
+        <h3>Would you like to create a new todo, {{ current_user.username }}? </h3>
+    {% endif %}
+
+    <a href="{{url_for('index')}}">My Dashboard</a>
+    <a href="{{url_for('todo_history')}}">Todo Action History</a>
+    
+    <form action="{{url_for('todo_create')}}" method="POST">
+        <input type="text" name="title" placeholder="Title">
+        <input type="text" name="content" placeholder="content">
+        <input type="text" name="tags" placeholder="Tags -> #food, #poem">
+        <input type="submit" value="Create New Todo">
+    </form>
+
+    {% if current_user.owned_notes %}
+        {% for note in notes %}
+            <div class="notes {% if note.done %} done-todo {% endif %}" id="note-{{note.id}}">
+                <h5>Title: {{note.title}}</h5>
+                <p> Content: {{note.content}}</p> 
+                <h6>Tags: {{note.tags}}</h6>
+                <h6 id="done">Done: {{note.done | upper()}}</h6>
+                <label for="done"> Done: </label>
+                <input type="checkbox" id="{{note.id}}" name="done" value="{{note.done}}" onchange="noteStatus('{{note.id}}')" {% if note.done %} checked {% endif %}> <br>
+                <button class="btn btn-warning" onclick="editNote('{{note.id}}')">Edit</button> 
+                <button class="btn btn-primary" onclick="deleteNote('{{note.id}}')">Delete</button>
+            </div>
+        {% endfor %}
+    {% else %}
+        <h4>You don't have any notes!</h4>
+    {% endif %}
+    
+    <!-- TODO: -->
+
+    <script>
+
+        function noteStatus(id) {
+            const noteDiv = document.getElementById(`note-${id}`);
+            const status = noteDiv.querySelector('input[name="done"]').checked;
+            const done = noteDiv.querySelector('#done');
+
+          
+                const data = {
+                    done: status
+                };
+
+                fetch(`{{url_for('todo_update',note_id='')}}` + id, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                }).then(res => {
+                    if (res.ok) {
+                        done.innerHTML = 'Done: '+ String(status).toUpperCase();
+
+                        if (status) {
+                            noteDiv.classList.add('done-todo');
+                        } else {
+                            noteDiv.classList.remove('done-todo');
+                        }
+                        
+                        return res.json();
+                          //location.reload()
+                    } else {
+                        alert("Error while updating status!")
+                    }
+                }).then(apiData => {
+                    console.log("Message from API:", apiData.message);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert("a network error occured!")
+                });
+        }
+
+        function deleteNote(id) {
+            ///delete-note/
+            fetch(`{{url_for('todo_delete',note_id='')}}`+ id, { method: 'POST' })
+                .then(res => location.reload());
+        }
+
+            const originalContents = {};
+            function editNote(id) {
+                    const noteDiv = document.getElementById(`note-${id}`);
+
+                    if (!originalContents[id]) {
+                        originalContents[id] = noteDiv.innerHTML;
+                    }
+                    
+                    
+                    const title = noteDiv.querySelector('h5').innerText.replace('Title: ', '');
+                    const content = noteDiv.querySelector('p').innerText.replace('Content: ', '');
+                    const tags = noteDiv.querySelector('h6').innerText.replace('Tags: ', '');
+
+                    noteDiv.innerHTML = `
+                    <form onsubmit="submitEdit(event, '${id}')">
+                        Title: <input type="text" name="title" value="${title}" class="form-control mb-2">
+                        Content: <textarea name="content" class="form-control mb-2">${content}</textarea>
+                        Tags: <input type="text" name="tags" value="${tags}" class="form-control mb-2">
+                        <button type="submit" class="btn btn-success">Save</button>
+                        <button type="button" class="btn btn-secondary" onclick="cancelEdit('${id}')">Cancel</button>
+                    </form>
+                `;
+                }
+
+            function cancelEdit(id) {
+                const noteDiv = document.getElementById(`note-${id}`);
+                if (originalContents[id]) {
+                    noteDiv.innerHTML = originalContents[id];
+                    delete originalContents[id];
+                }
+                
+                }
+
+                function submitEdit(event, id) {
+                        event.preventDefault();
+
+                        const form = event.target;
+                        const data = {
+                            title: form.title.value,
+                            content: form.content.value,
+                            tags: form.tags.value
+                        };
+
+                        fetch(`{{url_for('todo_update',note_id='')}}` + id, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(data)
+                        }).then(res => location.reload());
+                    }
+    </script>
+
+    {%endblock%}

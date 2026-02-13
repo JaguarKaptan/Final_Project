@@ -21,18 +21,279 @@
     </form>
 
     {% if current_user.owned_notes %}
-        {% for note in notes %}
-            <div class="notes {% if note.done %} done-todo {% endif %}" id="note-{{note.id}}">
-                <h5>Title: {{note.title}}</h5>
-                <p> Content: {{note.content}}</p> 
-                <h6>Tags: {{note.tags}}</h6>
-                <h6 id="done">Done: {{note.done | upper()}}</h6>
-                <label for="done"> Done: </label>
-                <input type="checkbox" id="{{note.id}}" name="done" value="{{note.done}}" onchange="noteStatus('{{note.id}}')" {% if note.done %} checked {% endif %}> <br>
-                <button class="btn btn-warning" onclick="editNote('{{note.id}}')">Edit</button> 
-                <button class="btn btn-primary" onclick="deleteNote('{{note.id}}')">Delete</button>
+
+        <div class="container">
+            <div class="row g-2 p-2 rounded-3 flex-column justify-content-center align-items-center">
+                <h3 class="mt-4">In Progress</h3>
+                <hr>
             </div>
-        {% endfor %}
+        </div>
+        
+        <div id="in-progress-list">
+        {% for note in in_progress %}
+     
+            <div class="container-fluid">
+                <div class="row g-2 p-2 rounded-3 flex-column justify-content-center align-items-center">
+            
+                    <div class="col-6 mx-auto bg-secondary rounded-3 border border-info p-3 notes {% if note.done %} done-todo {% endif %}"
+                        id="note-{{note.id}}" data-title="{{note.title}}" data-content="{{note.content}}" data-tags="{{note.tags}}" 
+                        data-updated="{{note.updated_at.strftime('%d.%m.%Y %H:%M')}}"
+                        data-created="{{note.created_at.strftime('%d.%m.%Y %H:%M')}}">
+            
+                        <div class="d-flex flex-column">
+                            <div class="note-content">
+                                <!-- <small id="done-{{note.id}}" class="text-muted"> -->
+                                    <!-- Status: {% if note.done %} Completed {% else %} In Progress {% endif %} -->
+                                    <!-- {{note.done | upper()}} -->
+                                <!-- </small> -->
+
+                                <div class="d-flex justify-content-between">
+                                    <small id="done-{{note.id}}" class="text-muted">
+                                        Status: {% if note.done %} Completed {% else %} In Progress {% endif %}
+                                    </small>
+                                    <small id="updated-{{note.id}}" class="text-warning">
+                                        Last updated: {{ note.updated_at.strftime("%d.%m.%Y %H:%M") }}
+                                    </small>
+                                </div>
+
+                                <hr>
+                                <h5 class="mb-1 note-preview">{{ note.title }}</h5>
+                                <p class="mb-0 text-body-secondary note-preview">{{ note.content }}</p>
+                                <button class="btn btn-link p-0" onclick="event.stopPropagation(); openReadModal('{{note.id}}')">
+                                    Read more →
+                                </button>
+                                <hr>
+                                <small class="text-info">Tags: {{ note.tags }}</small>
+                            </div>
+            
+                            <div class="d-flex justify-content-end align-items-center gap-2 mt-3">
+            
+                                <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteNote('{{note.id}}')">
+                                    Delete
+                                </button>
+            
+                                <button class="btn btn-warning btn-sm" onclick="event.stopPropagation(); openModal('{{note.id}}')"
+                                    style="cursor:pointer;">
+                                    Edit
+                                </button>
+            
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="{{note.id}}" name="done"
+                                        value="{{note.done}}" onchange="noteStatus('{{note.id}}')" {% if note.done %} checked {%
+                                        endif %} onclick="event.stopPropagation()">
+                                    <label class="form-check-label small">
+                                        Completed
+                                    </label>
+                                </div>
+                            </div>
+            
+                        </div>
+            
+                    </div>
+            
+            
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <!-- <hr class="my-5"> -->
+        
+        
+        <div class="container">
+            <div class="row g-2 p-2 rounded-3 flex-column justify-content-center align-items-center">
+                <h3>Completed</h3>
+                <hr>
+            </div>
+        </div>
+        
+        <div id="completed-list">
+            {% for note in completed %}
+        
+                <div class="container-fluid">
+                    <div class="row g-2 p-2 rounded-3 flex-column justify-content-center align-items-center">
+                
+                        <div class="col-6 mx-auto bg-secondary rounded-3 border border-info p-3 notes {% if note.done %} done-todo {% endif %}"
+                            id="note-{{note.id}}" data-title="{{note.title}}" data-content="{{note.content}}" data-tags="{{note.tags}}"
+                            data-updated="{{note.updated_at.strftime('%d.%m.%Y %H:%M')}}"
+                            data-created="{{note.created_at.strftime('%d.%m.%Y %H:%M')}}">
+                
+                            <div class="d-flex flex-column">
+                                <div class="note-content">
+                                    <!-- <small id="done-{{note.id}}" class="text-muted"> -->
+                                        <!-- Status: {% if note.done %} Completed {% else %} In Progress {% endif %} -->
+                                        <!-- {{note.done | upper()}} -->
+                                    <!-- </small> -->
+                                    <div class="d-flex justify-content-between">
+                                        <small id="done-{{note.id}}" class="text-muted">
+                                            Status: {% if note.done %} Completed {% else %} In Progress {% endif %}
+                                        </small>
+                                        <small id="updated-{{note.id}}" class="text-warning">
+                                            Last updated: {{ note.updated_at.strftime("%d.%m.%Y %H:%M") }}
+                                        </small>
+                                    </div>
+                                    <hr>
+                                    <h5 class="mb-1 note-preview">{{ note.title }}</h5>
+                                    <p class="mb-0 text-body-secondary note-preview">{{ note.content }}</p>
+                                    <button class="btn btn-link p-0" onclick="event.stopPropagation(); openReadModal('{{note.id}}')">
+                                        Read more →
+                                    </button>
+                                    <hr>
+                                    <small class="text-info">Tags: {{ note.tags }}</small>
+                                </div>
+                
+                                <div class="d-flex justify-content-end align-items-center gap-2 mt-3">
+                
+                                    <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteNote('{{note.id}}')">
+                                        Delete
+                                    </button>
+                
+                                    <button class="btn btn-warning btn-sm" onclick="event.stopPropagation(); openModal('{{note.id}}')"
+                                        style="cursor:pointer;">
+                                        Edit
+                                    </button>
+                
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="{{note.id}}" name="done"
+                                            value="{{note.done}}" onchange="noteStatus('{{note.id}}')" {% if note.done %} checked {%
+                                            endif %} onclick="event.stopPropagation()">
+                                        <label class="form-check-label small">
+                                            Completed
+                                        </label>
+                                    </div>
+                                </div>
+                
+                            </div>
+                
+                        </div>
+                
+                
+                    </div>
+                </div>
+            {% endfor %}
+            
+            <!-- <hr> -->
+
+            {% for note in notes %}
+
+                <div class="container-fluid">
+                    <div class="row g-2 p-2 rounded-3 flex-column justify-content-center align-items-center">
+                        
+                        <div class="col-6 mx-auto bg-secondary rounded-3 border border-info p-3 notes {% if note.done %} done-todo {% endif %}" id="note-{{note.id}}"
+                        data-title="{{note.title}}" data-content="{{note.content}}" data-tags="{{note.tags}}">
+
+                            <div class="d-flex flex-column">
+                                <div class="note-content">
+                                    <small id="done-{{note.id}}" class="text-muted">
+                                        Status: {% if note.done %} Completed {% else %} In Progress {% endif %}
+                                        <!-- {{note.done | upper()}} -->
+                                    </small>
+                                    <hr>
+                                    <h5 class="mb-1 note-preview">{{ note.title }}</h5>
+                                    <p class="mb-0 text-body-secondary note-preview">{{ note.content }}</p>
+                                        <button class="btn btn-link p-0" onclick="event.stopPropagation(); openReadModal('{{note.id}}')">
+                                            Read more →
+                                        </button>
+                                    <hr>
+                                    <small class="text-info">Tags: {{ note.tags }}</small>
+                                </div>
+                                
+                                <div class="d-flex justify-content-end align-items-center gap-2 mt-3">
+                                    
+                                    <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteNote('{{note.id}}')">
+                                        Delete
+                                    </button>
+
+                                    <button class="btn btn-warning btn-sm" onclick="event.stopPropagation(); openModal('{{note.id}}')" style="cursor:pointer;">
+                                        Edit
+                                    </button>
+                                    
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="{{note.id}}" name="done" value="{{note.done}}" onchange="noteStatus('{{note.id}}')" {%
+                                            if note.done %} checked {% endif %} onclick="event.stopPropagation()">
+                                        <label class="form-check-label small">
+                                            Completed
+                                        </label>
+                                    </div>
+                                </div>
+                        
+                            </div>
+                        
+                        </div>
+        
+                
+                    </div>
+                </div>
+
+                <!-- <div class="container border border-info rounded-5 notes {% if note.done %} done-todo {% endif %}" id="note-{{note.id}}">
+                    
+                    <h5>Title: {{note.title}}</h5>
+                    <p> Content: {{note.content}}</p> 
+                    <h6>Tags: {{note.tags}}</h6>
+                    <h6 id="done">Done: {{note.done | upper()}}</h6>
+                    <label for="done"> Done: </label>
+                    <input type="checkbox" id="{{note.id}}" name="done" value="{{note.done}}" onchange="noteStatus('{{note.id}}')" {% if note.done %} checked {% endif %}> <br>
+                    <button class="btn btn-warning" onclick="editNote('{{note.id}}')">Edit</button> 
+                    <button class="btn btn-primary" onclick="deleteNote('{{note.id}}')">Delete</button>
+                </div> -->
+            {% endfor %}
+        </div>
+
+        <div class="modal fade" id="noteModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content bg-dark text-white">
+                    <div class="modal-header">
+                        <h5 class="modal-title mb-0" id="modalTitle">Edit Note</h5>
+                        <small id="modalUpdatedAt" class="text-warning ms-2"></small>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="modalEditForm">
+                            <input type="hidden" id="modalNoteId">
+        
+                            <label>Title</label>
+                            <input type="text" id="modalTitleInput" class="form-control mb-2">
+        
+                            <label>Content</label>
+                            <textarea id="modalContentInput" class="form-control mb-2" rows="10"></textarea>
+        
+                            <label>Tags</label>
+                            <input type="text" id="modalTagsInput" class="form-control mb-2">
+        
+                            <button type="submit" class="btn btn-success">Save</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                Cancel
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="readModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content bg-dark text-white">
+                    <div class="modal-header">
+                        <h5 class="modal-title mb-0" id="readModalTitle"></h5>
+                        <small id="readModalCreatedAt" class="text-warning ms-2"></small>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="readModalContent" style="
+                                white-space: pre-wrap;
+                                max-height: 400px;
+                                overflow-y: auto;
+                                overflow-x: hidden;
+                                word-break: break-word;
+                                overflow-wrap: break-word;
+                             ">
+                        </div>
+       
+                        <hr>
+                        <small id="readModalTags" class="text-info"></small>
+                    </div>
+                </div>
+            </div>
+        </div>
     {% else %}
         <h4>You don't have any notes!</h4>
     {% endif %}
@@ -41,10 +302,13 @@
 
     <script>
 
+    
+            
         function noteStatus(id) {
             const noteDiv = document.getElementById(`note-${id}`);
             const status = noteDiv.querySelector('input[name="done"]').checked;
-            const done = noteDiv.querySelector('#done');
+            //const done = noteDiv.querySelector('#done');
+            const done = document.getElementById(`done-${id}`);
 
           
                 const data = {
@@ -57,7 +321,8 @@
                     body: JSON.stringify(data)
                 }).then(res => {
                     if (res.ok) {
-                        done.innerHTML = 'Done: '+ String(status).toUpperCase();
+                        //done.innerHTML = 'Done: '+ String(status).toUpperCase();
+                        done.innerHTML = 'Status: ' + (status ? 'Completed' : 'In Progress');
 
                         if (status) {
                             noteDiv.classList.add('done-todo');
@@ -65,6 +330,17 @@
                             noteDiv.classList.remove('done-todo');
                         }
                         
+                        const inProgressList = document.getElementById("in-progress-list");
+                        const completedList = document.getElementById("completed-list");
+
+                        const wrapper = noteDiv.closest('.container-fluid');
+
+                        if (status) {
+                            completedList.prepend(wrapper);
+                        } else {
+                            inProgressList.prepend(wrapper);
+                        }
+
                         return res.json();
                           //location.reload()
                     } else {
@@ -81,8 +357,23 @@
 
         function deleteNote(id) {
             ///delete-note/
+           
+
             fetch(`{{url_for('todo_delete',note_id='')}}`+ id, { method: 'POST' })
-                .then(res => location.reload());
+                .then(res => {
+                    if (!res.ok) {
+                        alert("Error while deleting!");
+                        return;
+                    }
+                    const noteDiv = document.getElementById(`note-${id}`);
+                    const wrapper = noteDiv.closest('.container-fluid');
+                    wrapper.remove();
+                    
+                })
+                .catch (err => {
+                console.error("Delete error:", err);
+                alert("Network error occurred!");
+                });
         }
 
             const originalContents = {};
@@ -94,9 +385,13 @@
                     }
                     
                     
-                    const title = noteDiv.querySelector('h5').innerText.replace('Title: ', '');
-                    const content = noteDiv.querySelector('p').innerText.replace('Content: ', '');
-                    const tags = noteDiv.querySelector('h6').innerText.replace('Tags: ', '');
+                    //const title = noteDiv.querySelector('h5').innerText.replace('Title: ', '');
+                    //const content = noteDiv.querySelector('p').innerText.replace('Content: ', '');
+                    //const tags = noteDiv.querySelector('h6').innerText.replace('Tags: ', '');
+                    
+                    const title = noteDiv.dataset.title;
+                    const content = noteDiv.dataset.content;
+                    const tags = noteDiv.dataset.tags;
 
                     noteDiv.innerHTML = `
                     <form onsubmit="submitEdit(event, '${id}')">
@@ -134,6 +429,104 @@
                             body: JSON.stringify(data)
                         }).then(res => location.reload());
                     }
+
+                    function openModal(id) {
+                            const noteDiv = document.getElementById(`note-${id}`);
+
+                            const title = noteDiv.dataset.title;
+                            const content = noteDiv.dataset.content;
+                            const tags = noteDiv.dataset.tags;
+
+                            const updated = noteDiv.dataset.updated;
+
+                            document.getElementById('modalUpdatedAt').innerText = "Last updated: " + updated;
+
+                            document.getElementById('modalNoteId').value = id;
+                            document.getElementById('modalTitleInput').value = title;
+                            document.getElementById('modalContentInput').value = content;
+                            document.getElementById('modalTagsInput').value = tags;
+
+                            const modal = new bootstrap.Modal(document.getElementById('noteModal'));
+                            modal.show();
+                        }
+
+                    document.getElementById('modalEditForm').addEventListener('submit', function (e) {
+                            e.preventDefault();
+
+                            const id = document.getElementById('modalNoteId').value;
+
+                            const data = {
+                                title: document.getElementById('modalTitleInput').value,
+                                content: document.getElementById('modalContentInput').value,
+                                tags: document.getElementById('modalTagsInput').value
+                            };
+
+                            fetch(`{{url_for('todo_update',note_id='')}}` + id, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(data)
+                            }).then(res => {
+                                if (!res.ok) {
+                                    alert("Error while updating!");
+                                    return;
+                                }
+                                return res.json();
+                            }).then(apiData => {
+
+                                const noteDiv = document.getElementById(`note-${id}`);
+
+                                // Update data attributes
+                                noteDiv.dataset.title = apiData.title;
+                                noteDiv.dataset.content = apiData.content;
+                                noteDiv.dataset.tags = apiData.tags;
+
+                                // Update displayed content
+                                noteDiv.querySelectorAll('.note-preview')[0].innerText = apiData.title;
+                                noteDiv.querySelectorAll('.note-preview')[1].innerText = apiData.content;
+                                noteDiv.querySelector('.text-info').innerText = "Tags: " + apiData.tags;
+
+                                noteDiv.dataset.updated = apiData.updated_at;
+                                document.getElementById(`updated-${id}`).innerText = "Last updated: " + apiData.updated_at;
+
+                                const wrapper = noteDiv.closest('.container-fluid');
+                                const inProgressList = document.getElementById("in-progress-list");
+                                const completedList = document.getElementById("completed-list");
+
+                                if (apiData.done) {
+                                    completedList.prepend(wrapper);
+                                } else {
+                                    inProgressList.prepend(wrapper);
+                                }
+                                
+                                // Close modal
+                                const modalElement = document.getElementById('noteModal');
+                                const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                                modalInstance.hide();
+                            })
+                                .catch(err => {
+                                    console.error("Update error:", err);
+                                    alert("Network error occurred!");
+                                });
+                        });
+
+                        function openReadModal(id) {
+                                const noteDiv = document.getElementById(`note-${id}`);
+
+                                const title = noteDiv.dataset.title;
+                                const content = noteDiv.dataset.content;
+                                const tags = noteDiv.dataset.tags;
+
+                                const created = noteDiv.dataset.created;
+                                document.getElementById('readModalCreatedAt').innerText = "Created: " + created;
+
+                                document.getElementById('readModalTitle').innerText = title;
+                                document.getElementById('readModalContent').innerText = content;
+                                document.getElementById('readModalTags').innerText = "Tags: " + tags;
+
+                                const modal = new bootstrap.Modal(document.getElementById('readModal'));
+                                modal.show();
+                            }
+
     </script>
 
     {%endblock%}
