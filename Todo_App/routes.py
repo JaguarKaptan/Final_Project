@@ -276,14 +276,6 @@ def register_routes(app, db, bcrypt):
     @login_required
     def todo_page():
 
-        # notes = Notes.query.filter(Notes.owner == current_user).all()
-        # return render_template('todo_page.html', notes=notes)
-
-        # all_notes = Notes.query.filter(Notes.owner == current_user).order_by(desc(Notes.updated_at)).all()
-
-        # in_progress = [n for n in all_notes if not n.done]
-        # completed = [n for n in all_notes if n.done]
-
         in_progress = (
         Notes.query
         .filter(Notes.owner == current_user, Notes.done == False)
@@ -309,9 +301,15 @@ def register_routes(app, db, bcrypt):
     def todo_create():
 
         if request.method == 'POST':
-            title = request.form.get('title')
-            content = request.form.get('content')
-            tags = request.form.get('tags')
+            # title = request.form.get('title')
+            # content = request.form.get('content')
+            # tags = request.form.get('tags')
+
+            data = request.get_json()
+
+            title = data.get('title')
+            content = data.get('content')
+            tags = data.get('tags')
 
             new_note = Notes(owner_id = current_user.user_id, title=title, content=content, tags=tags)
             db.session.add(new_note)
@@ -320,8 +318,21 @@ def register_routes(app, db, bcrypt):
             db.session.add(new_action)
             db.session.commit()
 
-            flash("Note Added Successfully!")
-            
+            #flash("Note Added Successfully!")
+
+            # return jsonify({
+            #     "id": new_note.id,
+            #     "title": new_note.title,
+            #     "content": new_note.content,
+            #     "tags": new_note.tags,
+            #     "created_at": new_note.created_at.strftime("%d.%m.%Y %H:%M"),
+            #     "updated_at": new_note.updated_at.strftime("%d.%m.%Y %H:%M"),
+            #     "done": new_note.done
+            # })
+            return render_template(
+                "components/_note_card.html",
+                note=new_note
+            )
         else:
             flash("Unexpected Error!")
         return redirect(url_for('todo_page'))
@@ -334,16 +345,12 @@ def register_routes(app, db, bcrypt):
             note = Notes.query.get(note_id)
             
             if not note or note.owner != current_user:
-                # flash("Note not found or unauthorized!")
-                # return redirect(url_for('todo_page'))
+
                 return {"message": "Note not found or unauthorized!"}, 404
 
             note_id_value = note.id
             note_title_value = note.title
 
-            # db.session.delete(note)
-            # db.session.commit()
-            #new_action = Note_History(note_id = note.id, title=note.title, action=NoteAction.NOTE_DELETED.value)
             new_action = Note_History(note_id = note_id_value , user_id=current_user.user_id, title=note_title_value, action=NoteAction.NOTE_DELETED.value)
             db.session.add(new_action)
             db.session.delete(note)
@@ -351,8 +358,6 @@ def register_routes(app, db, bcrypt):
 
             
             return {"message": "Note deleted successfully"}, 200
-            # flash("Note deleted successfully!!")
-            # return '', 200
         
         else:
             flash("Unexpected Error!")
@@ -417,10 +422,10 @@ def register_routes(app, db, bcrypt):
                 "title": note.title,
                 "content": note.content,
                 "tags": note.tags,
-                "done": note.done
+                "done": note.done,
+                "updated_at": note.updated_at.strftime("%d.%m.%Y %H:%M")
             }), 200
-            #return jsonify({'message': 'Note status updated successfully'}), 200
-        
+            
         else:
             flash("Unexpected Error!")
 
@@ -494,6 +499,7 @@ def register_routes(app, db, bcrypt):
     
 # will be done
     @app.route('/password-change', methods=['GET','POST'])
+    @login_required
     def password_change():
 
         if request.method == 'POST':

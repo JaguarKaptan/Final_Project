@@ -1,0 +1,57 @@
+<div class="container-fluid">
+    <div class="row g-2 p-2 rounded-3 flex-column justify-content-center align-items-center">
+
+        <div class="col-6 mx-auto bg-secondary rounded-3 border border-info p-3 notes {% if note.done %} done-todo {% endif %}"
+            id="note-{{note.id}}" data-title="{{note.title}}" data-content="{{note.content}}" data-tags="{{note.tags}}"
+            data-updated="{{note.updated_at.strftime('%d.%m.%Y %H:%M')}}"
+            data-created="{{note.created_at.strftime('%d.%m.%Y %H:%M')}}">
+
+            <div class="d-flex flex-column">
+                <div class="note-content">
+                    <div class="d-flex justify-content-between">
+                        <small id="done-{{note.id}}" class="text-muted">
+                            Status: {% if note.done %} Completed {% else %} In Progress {% endif %}
+                        </small>
+                        <small id="updated-{{note.id}}" class="text-warning">
+                            Last updated: {{ note.updated_at.strftime("%d.%m.%Y %H:%M") }}
+                        </small>
+                    </div>
+
+                    <hr>
+                    <h5 class="mb-1 note-preview">{{ note.title }}</h5>
+                    <p class="mb-0 text-body-secondary note-preview">{{ note.content }}</p>
+                    <button class="btn btn-link p-0" onclick="event.stopPropagation(); openReadModal('{{note.id}}')">
+                        Read more →
+                    </button>
+                    <hr>
+                    <small class="text-info">Tags: {{ note.tags }}</small>
+                </div>
+
+                <div class="d-flex justify-content-end align-items-center gap-2 mt-3">
+
+                    <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteNote('{{note.id}}')">
+                        Delete
+                    </button>
+
+                    <button class="btn btn-warning btn-sm" onclick="event.stopPropagation(); openModal('{{note.id}}')"
+                        style="cursor:pointer;">
+                        Edit
+                    </button>
+
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="{{note.id}}" name="done"
+                            value="{{note.done}}" onchange="noteStatus('{{note.id}}')" {% if note.done %} checked {%
+                            endif %} onclick="event.stopPropagation()">
+                        <label class="form-check-label small">
+                            Completed
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+</div>

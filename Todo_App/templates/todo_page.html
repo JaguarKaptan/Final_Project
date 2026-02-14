@@ -13,12 +13,33 @@
     <a href="{{url_for('index')}}">My Dashboard</a>
     <a href="{{url_for('todo_history')}}">Todo Action History</a>
     
-    <form action="{{url_for('todo_create')}}" method="POST">
+    <!-- <form action="{{url_for('todo_create')}}" method="POST">
         <input type="text" name="title" placeholder="Title">
         <input type="text" name="content" placeholder="content">
         <input type="text" name="tags" placeholder="Tags -> #food, #poem">
         <input type="submit" value="Create New Todo">
-    </form>
+    </form> -->
+
+    <!-- <form id="createForm"> -->
+        <!-- <input type="text" id="createTitle" placeholder="Title">
+        <input type="text" id="createContent" placeholder="content"> -->
+        <!-- <input type="text" id="createTags" placeholder="Tags -> #food, #poem"> -->
+        <!-- <input type="submit" value="Create New Todo"> -->
+        <!-- <button type="button" onclick="openCreateModal()">New Todo</button> -->
+        
+    <!-- </form> -->
+
+  
+<div class="container">
+    <div class="row">
+        <div class="col d-flex justify-content-end">
+            <button type="button" class="btn btn-clean d-flex align-items-center gap-2" onclick="openCreateModal()">
+                <i class="bi bi-plus-circle-dotted fs-3"></i>
+                New Todo
+            </button>
+        </div>
+    </div>
+</div>
 
     {% if current_user.owned_notes %}
 
@@ -32,7 +53,7 @@
         <div id="in-progress-list">
         {% for note in in_progress %}
      
-            <div class="container-fluid">
+            <!-- <div class="container-fluid">
                 <div class="row g-2 p-2 rounded-3 flex-column justify-content-center align-items-center">
             
                     <div class="col-6 mx-auto bg-secondary rounded-3 border border-info p-3 notes {% if note.done %} done-todo {% endif %}"
@@ -42,11 +63,6 @@
             
                         <div class="d-flex flex-column">
                             <div class="note-content">
-                                <!-- <small id="done-{{note.id}}" class="text-muted"> -->
-                                    <!-- Status: {% if note.done %} Completed {% else %} In Progress {% endif %} -->
-                                    <!-- {{note.done | upper()}} -->
-                                <!-- </small> -->
-
                                 <div class="d-flex justify-content-between">
                                     <small id="done-{{note.id}}" class="text-muted">
                                         Status: {% if note.done %} Completed {% else %} In Progress {% endif %}
@@ -93,10 +109,11 @@
             
             
                 </div>
-            </div>
+            </div> -->
+
+            {% include "components/_note_card.html" %}
             {% endfor %}
         </div>
-        <!-- <hr class="my-5"> -->
         
         
         <div class="container">
@@ -109,7 +126,7 @@
         <div id="completed-list">
             {% for note in completed %}
         
-                <div class="container-fluid">
+                <!-- <div class="container-fluid">
                     <div class="row g-2 p-2 rounded-3 flex-column justify-content-center align-items-center">
                 
                         <div class="col-6 mx-auto bg-secondary rounded-3 border border-info p-3 notes {% if note.done %} done-todo {% endif %}"
@@ -118,11 +135,7 @@
                             data-created="{{note.created_at.strftime('%d.%m.%Y %H:%M')}}">
                 
                             <div class="d-flex flex-column">
-                                <div class="note-content">
-                                    <!-- <small id="done-{{note.id}}" class="text-muted"> -->
-                                        <!-- Status: {% if note.done %} Completed {% else %} In Progress {% endif %} -->
-                                        <!-- {{note.done | upper()}} -->
-                                    <!-- </small> -->
+                                <div class="note-content"> 
                                     <div class="d-flex justify-content-between">
                                         <small id="done-{{note.id}}" class="text-muted">
                                             Status: {% if note.done %} Completed {% else %} In Progress {% endif %}
@@ -168,75 +181,46 @@
                 
                 
                     </div>
-                </div>
+                </div> -->
+
+                {% include "components/_note_card.html" %}
             {% endfor %}
             
-            <!-- <hr> -->
 
-            {% for note in notes %}
+     
+        </div>
 
-                <div class="container-fluid">
-                    <div class="row g-2 p-2 rounded-3 flex-column justify-content-center align-items-center">
-                        
-                        <div class="col-6 mx-auto bg-secondary rounded-3 border border-info p-3 notes {% if note.done %} done-todo {% endif %}" id="note-{{note.id}}"
-                        data-title="{{note.title}}" data-content="{{note.content}}" data-tags="{{note.tags}}">
 
-                            <div class="d-flex flex-column">
-                                <div class="note-content">
-                                    <small id="done-{{note.id}}" class="text-muted">
-                                        Status: {% if note.done %} Completed {% else %} In Progress {% endif %}
-                                        <!-- {{note.done | upper()}} -->
-                                    </small>
-                                    <hr>
-                                    <h5 class="mb-1 note-preview">{{ note.title }}</h5>
-                                    <p class="mb-0 text-body-secondary note-preview">{{ note.content }}</p>
-                                        <button class="btn btn-link p-0" onclick="event.stopPropagation(); openReadModal('{{note.id}}')">
-                                            Read more →
-                                        </button>
-                                    <hr>
-                                    <small class="text-info">Tags: {{ note.tags }}</small>
-                                </div>
-                                
-                                <div class="d-flex justify-content-end align-items-center gap-2 mt-3">
-                                    
-                                    <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteNote('{{note.id}}')">
-                                        Delete
-                                    </button>
-
-                                    <button class="btn btn-warning btn-sm" onclick="event.stopPropagation(); openModal('{{note.id}}')" style="cursor:pointer;">
-                                        Edit
-                                    </button>
-                                    
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" id="{{note.id}}" name="done" value="{{note.done}}" onchange="noteStatus('{{note.id}}')" {%
-                                            if note.done %} checked {% endif %} onclick="event.stopPropagation()">
-                                        <label class="form-check-label small">
-                                            Completed
-                                        </label>
-                                    </div>
-                                </div>
-                        
-                            </div>
-                        
-                        </div>
+        <div class="modal fade" id="createModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content bg-dark text-white">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Create New Todo</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="createModalForm">
         
-                
+                            <label>Title</label>
+                            <input type="text" id="createModalTitle" class="form-control mb-2">
+        
+                            <label>Content</label>
+                            <textarea id="createModalContent" class="form-control mb-2" rows="10"></textarea>
+        
+                            <label>Tags</label>
+                            <input type="text" id="createModalTags" class="form-control mb-2">
+        
+                            <button type="submit" class="btn btn-success">Create</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                Cancel
+                            </button>
+        
+                        </form>
                     </div>
                 </div>
-
-                <!-- <div class="container border border-info rounded-5 notes {% if note.done %} done-todo {% endif %}" id="note-{{note.id}}">
-                    
-                    <h5>Title: {{note.title}}</h5>
-                    <p> Content: {{note.content}}</p> 
-                    <h6>Tags: {{note.tags}}</h6>
-                    <h6 id="done">Done: {{note.done | upper()}}</h6>
-                    <label for="done"> Done: </label>
-                    <input type="checkbox" id="{{note.id}}" name="done" value="{{note.done}}" onchange="noteStatus('{{note.id}}')" {% if note.done %} checked {% endif %}> <br>
-                    <button class="btn btn-warning" onclick="editNote('{{note.id}}')">Edit</button> 
-                    <button class="btn btn-primary" onclick="deleteNote('{{note.id}}')">Delete</button>
-                </div> -->
-            {% endfor %}
+            </div>
         </div>
+
 
         <div class="modal fade" id="noteModal" tabindex="-1">
             <div class="modal-dialog modal-lg">
@@ -248,6 +232,7 @@
                     </div>
                     <div class="modal-body">
                         <form id="modalEditForm">
+                            
                             <input type="hidden" id="modalNoteId">
         
                             <label>Title</label>
@@ -307,7 +292,6 @@
         function noteStatus(id) {
             const noteDiv = document.getElementById(`note-${id}`);
             const status = noteDiv.querySelector('input[name="done"]').checked;
-            //const done = noteDiv.querySelector('#done');
             const done = document.getElementById(`done-${id}`);
 
           
@@ -321,7 +305,7 @@
                     body: JSON.stringify(data)
                 }).then(res => {
                     if (res.ok) {
-                        //done.innerHTML = 'Done: '+ String(status).toUpperCase();
+
                         done.innerHTML = 'Status: ' + (status ? 'Completed' : 'In Progress');
 
                         if (status) {
@@ -342,7 +326,7 @@
                         }
 
                         return res.json();
-                          //location.reload()
+                         
                     } else {
                         alert("Error while updating status!")
                     }
@@ -356,9 +340,7 @@
         }
 
         function deleteNote(id) {
-            ///delete-note/
            
-
             fetch(`{{url_for('todo_delete',note_id='')}}`+ id, { method: 'POST' })
                 .then(res => {
                     if (!res.ok) {
@@ -375,60 +357,50 @@
                 alert("Network error occurred!");
                 });
         }
+                    function openCreateModal() {
 
-            const originalContents = {};
-            function editNote(id) {
-                    const noteDiv = document.getElementById(`note-${id}`);
+                            document.getElementById("createModalTitle").value = "";
+                            document.getElementById("createModalContent").value = "";
+                            document.getElementById("createModalTags").value = "";
 
-                    if (!originalContents[id]) {
-                        originalContents[id] = noteDiv.innerHTML;
-                    }
-                    
-                    
-                    //const title = noteDiv.querySelector('h5').innerText.replace('Title: ', '');
-                    //const content = noteDiv.querySelector('p').innerText.replace('Content: ', '');
-                    //const tags = noteDiv.querySelector('h6').innerText.replace('Tags: ', '');
-                    
-                    const title = noteDiv.dataset.title;
-                    const content = noteDiv.dataset.content;
-                    const tags = noteDiv.dataset.tags;
+                            const modal = new bootstrap.Modal(document.getElementById('createModal'));
+                            modal.show();
+                        }
 
-                    noteDiv.innerHTML = `
-                    <form onsubmit="submitEdit(event, '${id}')">
-                        Title: <input type="text" name="title" value="${title}" class="form-control mb-2">
-                        Content: <textarea name="content" class="form-control mb-2">${content}</textarea>
-                        Tags: <input type="text" name="tags" value="${tags}" class="form-control mb-2">
-                        <button type="submit" class="btn btn-success">Save</button>
-                        <button type="button" class="btn btn-secondary" onclick="cancelEdit('${id}')">Cancel</button>
-                    </form>
-                `;
-                }
+                    document.getElementById("createModalForm").addEventListener("submit", function (e) {
 
-            function cancelEdit(id) {
-                const noteDiv = document.getElementById(`note-${id}`);
-                if (originalContents[id]) {
-                    noteDiv.innerHTML = originalContents[id];
-                    delete originalContents[id];
-                }
-                
-                }
+                            e.preventDefault();
 
-                function submitEdit(event, id) {
-                        event.preventDefault();
+                            const data = {
+                                title: document.getElementById("createModalTitle").value,
+                                content: document.getElementById("createModalContent").value,
+                                tags: document.getElementById("createModalTags").value
+                            };
 
-                        const form = event.target;
-                        const data = {
-                            title: form.title.value,
-                            content: form.content.value,
-                            tags: form.tags.value
-                        };
+                            fetch(`{{url_for('todo_create')}}`, {
+                                method: "POST",
+                                headers: {
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify(data)
+                            })
+                                .then(res => res.text())
+                                .then(html => {
 
-                        fetch(`{{url_for('todo_update',note_id='')}}` + id, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(data)
-                        }).then(res => location.reload());
-                    }
+                                    document.getElementById("in-progress-list")
+                                        .insertAdjacentHTML("afterbegin", html);
+
+                                    const modalElement = document.getElementById('createModal');
+                                    const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                                    modalInstance.hide();
+                                })
+                                .catch(err => {
+                                    console.error(err);
+                                    alert("Network error!");
+                                });
+
+                        });
+
 
                     function openModal(id) {
                             const noteDiv = document.getElementById(`note-${id}`);
@@ -509,6 +481,8 @@
                                 });
                         });
 
+
+
                         function openReadModal(id) {
                                 const noteDiv = document.getElementById(`note-${id}`);
 
@@ -526,6 +500,15 @@
                                 const modal = new bootstrap.Modal(document.getElementById('readModal'));
                                 modal.show();
                             }
+
+                        
+
+                        
+                        document.addEventListener('hide.bs.modal', function () {
+                                if (document.activeElement) {
+                                    document.activeElement.blur();
+                                }
+                            });
 
     </script>
 

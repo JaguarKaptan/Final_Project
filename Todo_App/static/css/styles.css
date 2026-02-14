@@ -124,3 +124,18 @@
     width: 1.3rem;
     height: 1.3rem;
 }
+
+.btn-clean {
+    background: transparent;
+    border: 1px solid transparent;
+    color: #4fc3f7;
+    transition: all 0.5s ease;
+}
+
+
+
+.btn-clean:hover {
+    color: #438fb3;
+    border: 1px solid #4fc3f7;
+    transform: translateY(-1px);
+}

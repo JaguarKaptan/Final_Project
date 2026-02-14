@@ -74,5 +74,160 @@ $border-color: #1f2640;
     border-color: $primary !important; // tema primary ile focus glow
 }
 
+$btn-close-color: $danger;
+
 
 @import "../../node_modules/bootstrap/scss/bootstrap";
+
+.btn-close {
+    filter: none;
+    opacity: 1;
+    transition: transform 0.15s ease;
+}
+
+.btn-close:hover {
+    transform: scale(1.1);
+}
+
+.done-todo {
+    text-decoration: line-through;
+}
+
+.history-item {
+    transition: background-color 0.2s;
+}
+
+.history-item:hover {
+    background-color: #12172e;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 24px;
+    color: #4fc3f7 !important;
+}
+
+
+#filter {
+    padding: 5px 10px;
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+
+.custom-dropdown {
+    background-color: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
+.custom-dropdown-item {
+    background-color: #12172e !important;
+    color: #4fc3f7 !important;
+    transition: background-color 0.2s;
+}
+
+.custom-dropdown-item:hover {
+
+    background-color: #317ea1 !important;
+    color: #ffffff !important;
+}
+
+.custom-dropdown-item-logout:hover {
+    background-color: #ff4d4d !important;
+    color: white !important;
+}
+
+.custom-dropdown-link {
+    background-color: #12172e !important;
+    color: white !important;
+    transition: background-color 0.2s, color 0.2s;
+
+}
+
+.custom-dropdown-link:hover {
+    background-color: #1a1f36 !important;
+    color: #4fc3f7 !important;
+}
+
+.custom-icon-color {
+    display: inline-block;
+    transform: scale(1.2) translateY(-2px);
+    transform-origin: center center;
+    vertical-align: middle;
+}
+
+.notevergent-logo {
+    color: #7e57c2 !important;
+    display: inline-block;
+    transform: scale(1.3) translateY(-2px);
+    transform-origin: center center;
+    vertical-align: middle;
+}
+
+.dashboard-logo {
+    color: #ffc107 !important;
+}
+
+.todo-logo {
+    color: #4caf50 !important;
+}
+
+.todo-history-logo {
+    color: #7e57c2 !important;
+}
+
+.profile-logo {
+    background-color: #336b856a;
+    color: #4fc3f7;
+}
+
+.public-id-logo {
+    background-color: #336b856a;
+    color: #66bb6a;
+}
+
+.mail-logo {
+    background-color: #754ac040;
+    color: #7e57c2;
+}
+
+.view-profile {
+    background-color: #0d112b;
+    border-color: #222c65;
+}
+
+.note-preview {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.note-content {
+    min-width: 0;
+    flex: 1;
+}
+
+.notes .form-check-input {
+    width: 1.3rem;
+    height: 1.3rem;
+}
+
+.btn-clean {
+    background: transparent;
+    border: 1px solid transparent;
+    color: #4fc3f7;
+    transition: all 0.5s ease;
+}
+
+
+
+.btn-clean:hover {
+    color: #438fb3;
+    border: 1px solid #4fc3f7;
+    transform: translateY(-1px);
+}
