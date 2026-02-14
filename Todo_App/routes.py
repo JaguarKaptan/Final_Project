@@ -301,9 +301,6 @@ def register_routes(app, db, bcrypt):
     def todo_create():
 
         if request.method == 'POST':
-            # title = request.form.get('title')
-            # content = request.form.get('content')
-            # tags = request.form.get('tags')
 
             data = request.get_json()
 
@@ -318,17 +315,6 @@ def register_routes(app, db, bcrypt):
             db.session.add(new_action)
             db.session.commit()
 
-            #flash("Note Added Successfully!")
-
-            # return jsonify({
-            #     "id": new_note.id,
-            #     "title": new_note.title,
-            #     "content": new_note.content,
-            #     "tags": new_note.tags,
-            #     "created_at": new_note.created_at.strftime("%d.%m.%Y %H:%M"),
-            #     "updated_at": new_note.updated_at.strftime("%d.%m.%Y %H:%M"),
-            #     "done": new_note.done
-            # })
             return render_template(
                 "components/_note_card.html",
                 note=new_note
