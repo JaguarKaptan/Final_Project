@@ -4,6 +4,7 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail
+from datetime import timedelta
 
 db = SQLAlchemy()
 mail = Mail()
@@ -12,8 +13,9 @@ def create_app():
     app = Flask(__name__, template_folder='templates')
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///./myapp.db'
 
-    app.config["SESSION_PERMANENT"] = True
+    app.config["SESSION_PERMANENT"] = False
     app.config["SESSION_TYPE"] = "filesystem"
+    app.config["REMEMBER_COOKIE_DURATION"] = timedelta(days=7)
 
     # Mail Configuration
     app.config['MAIL_SERVER'] = 'localhost'

@@ -76,6 +76,27 @@ $border-color: #1f2640;
 
 $btn-close-color: $danger;
 
+select.form-select {
+    color: #ffffff;  
+    background-color: #1a2345;  
+    border: 1px solid #2c3e60;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    padding-right: 2.5rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 4 5'%3E%3Cpath fill='white' d='M0 0l2 2 2-2z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 0.65rem auto;
+    
+}
+
+select.form-select:focus {
+    border-color: #3a4e7a;
+    outline: none;
+    box-shadow: 0 0 0 0.2rem rgba(58, 78, 122, .25);
+}
+
 
 @import "../../node_modules/bootstrap/scss/bootstrap";
 
@@ -212,9 +233,23 @@ $btn-close-color: $danger;
     flex: 1;
 }
 
+// .notes .form-check-input {
+//     width: 1.9rem;
+//     height: 1.9rem;
+    
+// }
+
 .notes .form-check-input {
-    width: 1.3rem;
-    height: 1.3rem;
+    width: 1.9rem;
+    height: 1.9rem;
+    border: 2px solid #4caf50;
+    background-color: #12172e;
+    accent-color: #4caf50;
+}
+
+.notes .form-check-input:checked {
+    background-color: #4caf50;
+    border-color: #4caf50;
 }
 
 .btn-clean {
@@ -230,4 +265,23 @@ $btn-close-color: $danger;
     color: #438fb3;
     border: 1px solid #4fc3f7;
     transform: translateY(-1px);
+}
+
+// .card:hover {
+//     transform: translateY(-3px);
+//     box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, .15);
+//     transition: all 0.2s ease-in-out;
+// }
+
+.history-item {
+    background-color: #12172e;
+    color: #fff;
+    transition: all 0.2s ease-in-out;
+}
+
+.history-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, .25);
+    background-color: #1a2345;
+
 }

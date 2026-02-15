@@ -17,7 +17,7 @@
 </head>
 <body>
     
-    {% with messages = get_flashed_messages()%}
+    <!-- {% with messages = get_flashed_messages()%}
         {%if messages %}
             <ul>
             {%for message in messages%}
@@ -25,8 +25,29 @@
             {%endfor%}
             </ul>
         {%endif%}
-    {%endwith%}
+    {%endwith%} -->
 
+    <!-- {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                 showFlash("{{ message|tojson }}", "{{ category }}");
+            {% endfor %}
+        {% endif %}
+    {% endwith %} -->
+
+    <div id="flash-data" style="display: none;">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <span class="flash-item" data-message="{{ message }}" data-category="{{ category }}"></span>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <div id="flash-container"
+        style="position: fixed; bottom: 20px; right: 20px; z-index: 1050; display: flex; flex-direction: column; gap: 10px; align-items: flex-end;">
+    </div>
     <!-- <p>This will always be here</p> -->
     {% if current_user.is_authenticated %}
     <nav class="navbar navbar-expand-lg bg-secondary border-bottom border-secondary-subtle" data-bs-theme="dark">
@@ -223,7 +244,7 @@
 
 
     {% endif %}
-
+    {% block breadcrumb %}{% endblock %}
     {%block content%}   {%endblock%}
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
@@ -298,7 +319,9 @@
                     alert("a network error occured!")
                 });
         }
-    
+        
+        
     </script>
+    <script src="{{ url_for('static', filename='js/notify.js') }}"></script>
 </body>
 </html>

@@ -5,6 +5,8 @@ from datetime import datetime, timezone, timedelta
 from helper import create_token, send_email, utc_now_naive, is_valid_email, create_security_logs, validate_token
 from log_variables import SecurityAction, TokenAction, TokenError, NoteAction
 from sqlalchemy import desc, or_
+from flask import session
+from flask import get_flashed_messages
 
 def register_routes(app, db, bcrypt):
 
@@ -61,7 +63,7 @@ def register_routes(app, db, bcrypt):
             send_email(user.email, "Verify your email", f"Click here to verify: {verify_url}")
             create_security_logs(user, SecurityAction.EMAIL_VERIFICATION_SENT)
 
-
+            flash("Account created successfully! Please verify your email in an hour! Otherwise your account will be deleted!", "success")
             return redirect(url_for('verify_notice'))
         
 
@@ -74,11 +76,12 @@ def register_routes(app, db, bcrypt):
         elif request.method == 'POST':
             username = request.form.get('username')
             password = request.form.get('password')
+            remember = request.form.get('remember') == 'on'
 
             user = User.query.filter(User.username == username).first()
 
             if not user:
-                flash("Invalid Username or Password")
+                flash("Invalid Username or Password", "danger")
                 return redirect(url_for('login'))
 
             if bcrypt.check_password_hash(user.password_hash, password):
@@ -88,24 +91,27 @@ def register_routes(app, db, bcrypt):
                     if record:
                         if  record.expire < utc_now_naive():
                             #Token expired!
-                            flash("Verification code has been expired.")
+                            flash("Verification code has been expired.", "danger")
                             token = create_token(user, TokenAction.ACCOUNT_DELETION, True)
                             return redirect(url_for('delete', token=token))  # Just for the testing, in product environment background check must be set
                         else:
                             remaining = record.expire - utc_now_naive()
                             minutes = int(remaining.total_seconds() // 60)
                             seconds = int(remaining.total_seconds() % 60)
-                            flash(f"Please verify your email in {minutes} minutes and {seconds} seconds.")
+                            flash(f"Please verify your email in {minutes} minutes and {seconds} seconds.", "warning")
                     else:
-                        flash("E-mail is not verified in specified time, account deleted!")
+                        flash("E-mail is not verified in specified time, account deleted!", "warning")
                         token = create_token(user, TokenAction.ACCOUNT_DELETION, True)
                         return redirect(url_for('delete', token=token))  # Just for the testing, in product environment background check must be set
 
                 create_security_logs(user, SecurityAction.LOGIN_SUCCESS)
-                login_user(user)
+                #login_user(user)
+                session.permanent = False
+                login_user(user, remember=remember)
+                flash("Logged in successfully!", "success")
                 return redirect(url_for('index'))
             else:
-                flash("Invalid Username or Password")
+                flash("Invalid Username or Password", "danger")
                 create_security_logs(user, SecurityAction.LOGIN_FAILED)
                 return redirect(url_for('login'))
             
@@ -114,6 +120,7 @@ def register_routes(app, db, bcrypt):
     def logout():
         create_security_logs(current_user, SecurityAction.USER_LOGOUT)
         logout_user()
+        flash("You have been logged out!", "success")
         return redirect(url_for('index'))
     
     @app.route('/delete_confirm')
@@ -135,7 +142,7 @@ def register_routes(app, db, bcrypt):
         record, error = validate_token(token,TokenAction.ACCOUNT_DELETION)
 
         if error:
-            flash(error)
+            flash(error, "danger")
             return redirect(url_for('login'))
         
         user = record.user
@@ -143,7 +150,7 @@ def register_routes(app, db, bcrypt):
         db.session.delete(user)
         db.session.commit()
         create_security_logs(user, SecurityAction.ACCOUNT_DELETED)
-        #flash("User has been deleted due to expired verification.")
+        flash("User has been deleted due to expired verification.", "danger")
         return redirect(url_for("signup"))
     
     # ======================
@@ -163,7 +170,7 @@ def register_routes(app, db, bcrypt):
             user = User.query.filter(or_(User.username == username, User.email == username)).first()
 
             if not user:
-                flash("Invalid Username or E-mail")
+                flash("Invalid Username or E-mail", "danger")
                 return redirect(url_for('login'))
             
             create_security_logs(user, SecurityAction.USER_ATTEMPT_RECOVER_ACCOUNT)
@@ -176,11 +183,11 @@ def register_routes(app, db, bcrypt):
 
             create_security_logs(user, SecurityAction.ACCOUNT_RECOVERY_MAIL_SENT)
 
-            flash("Recovery Mail Has Been Sent!")
+            flash("Recovery Mail Has Been Sent!", "success")
             return redirect(url_for('login'))
 
         else:
-            flash('Unexpected Error')
+            flash('Unexpected Error', "danger")
             return redirect(url_for('login'))
 
     @app.route('/recover/<token>')
@@ -190,7 +197,7 @@ def register_routes(app, db, bcrypt):
         record, error = validate_token(token,TokenAction.ACCOUNT_RECOVERY)
 
         if error:
-            flash(error)
+            flash(error, "danger")
             return redirect(url_for('login'))
 
         
@@ -210,25 +217,25 @@ def register_routes(app, db, bcrypt):
         record, error = validate_token(token,TokenAction.ACCOUNT_RECOVERY)
 
         if error:
-            flash(error)
+            flash(error, "danger")
             return redirect(url_for('login'))
 
        
         
         if not password == confirm:
-            flash("Passwords do not match")
+            flash("Passwords do not match", "danger")
             return redirect(request.referrer)
 
         user = record.user
         if not user:
-            flash("User not found")
+            flash("User not found", "danger")
             return redirect(url_for('login'))
 
         user.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
         db.session.delete(record)
         db.session.commit()
         create_security_logs(user, SecurityAction.PASSWORD_CHANGED)
-        flash("Password has been changed successfully!")
+        flash("Password has been changed successfully!", "success")
         return redirect(url_for('login'))
 
 
@@ -248,12 +255,12 @@ def register_routes(app, db, bcrypt):
         
         
         if error == TokenError.TOKEN_EXPIRED.value:
-            flash(error)
+            flash(error, "danger")
             user = record.user
             token = create_token(user, TokenAction.ACCOUNT_DELETION, True)
             return redirect(url_for('delete', token=token))
         elif error:
-            flash(error)
+            flash(error, "danger")
             return redirect(url_for('login'))
 
        
@@ -264,7 +271,7 @@ def register_routes(app, db, bcrypt):
         db.session.delete(record)
         db.session.commit()
         create_security_logs(user, SecurityAction.EMAIL_VERIFIED)
-        flash("E-mail has successfuly verified!")
+        flash("E-mail has successfuly verified!", "success")
         return redirect(url_for('login'))
     
 
@@ -315,12 +322,13 @@ def register_routes(app, db, bcrypt):
             db.session.add(new_action)
             db.session.commit()
 
+            #flash("Note created successfully!", "success")
             return render_template(
                 "components/_note_card.html",
                 note=new_note
             )
         else:
-            flash("Unexpected Error!")
+            flash("Unexpected Error!", "danger")
         return redirect(url_for('todo_page'))
         
     @app.route('/todo-delete/<note_id>', methods=['POST'])
@@ -342,11 +350,11 @@ def register_routes(app, db, bcrypt):
             db.session.delete(note)
             db.session.commit()
 
-            
+            #flash("Note deleted successfully!", "success")
             return {"message": "Note deleted successfully"}, 200
         
         else:
-            flash("Unexpected Error!")
+            flash("Unexpected Error!", "danger")
 
         return redirect(url_for('todo_page'))
 
@@ -358,7 +366,7 @@ def register_routes(app, db, bcrypt):
             note = Notes.query.get(note_id)
             
             if not note or note.owner != current_user:
-                flash("Note not found or unauthorized!")
+                flash("Note not found or unauthorized!", "danger")
                 return redirect(url_for('todo_page'))
 
             data = request.get_json()
@@ -401,7 +409,7 @@ def register_routes(app, db, bcrypt):
                 db.session.add(new_action)
 
             db.session.commit()
-            
+            #flash("Note updated successfully!", "success")
             return jsonify({
                 "message": "Note updated successfully",
                 "id": note.id,
@@ -413,7 +421,7 @@ def register_routes(app, db, bcrypt):
             }), 200
             
         else:
-            flash("Unexpected Error!")
+            flash("Unexpected Error!", "danger")
 
         return redirect(url_for('todo_page'))
     
@@ -495,16 +503,16 @@ def register_routes(app, db, bcrypt):
             confirm = request.form.get('password-confirm')
 
             if not password == confirm:
-                flash("Passwords do not match")
+                flash("Passwords do not match", "danger")
                 return redirect(request.referrer)
             if not username == current_user.username:
-                flash("Unauthorized Action")
+                flash("Unauthorized Action", "danger")
                 return redirect(request.referrer)
             
             user = User.query.filter(or_(User.username == username)).first()
 
             if not user:
-                flash("Invalid Username")
+                flash("Invalid Username", "danger")
                 return redirect(request.referrer)
             
             create_security_logs(user, SecurityAction.USER_ATTEMPT_PASSWORD_CHANGE)
@@ -513,18 +521,17 @@ def register_routes(app, db, bcrypt):
             record, error = validate_token(token,TokenAction.PASSWORD_CHANGE)
 
             if error:
-                flash(error)
+                flash(error, "danger")
                 return redirect(request.referrer)
 
             user.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
             db.session.delete(record)
             db.session.commit()
             create_security_logs(user, SecurityAction.PASSWORD_CHANGED)
-            flash("Password has been changed successfully!")
+            flash("Password has been changed successfully!", "success")
             return redirect(request.referrer)
 
         else:
-            flash('Unexpected Error')
+            flash('Unexpected Error', "danger")
             return redirect(request.referrer)
-        
         

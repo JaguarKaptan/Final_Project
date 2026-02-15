@@ -2,6 +2,17 @@
     {%extends "base.html"%}
     {%block title%} Todo Page {%endblock%}
 
+
+    {% block breadcrumb %}
+    <nav aria-label="breadcrumb" class="mt-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ url_for('index') }}">Dashboard</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Todo List</li>
+            <li class="breadcrumb-item"><a href="{{ url_for('todo_history') }}">Todo History</a></li>
+        </ol>
+    </nav>
+    {% endblock %}
+
     {%block content%}
 
     <h1>Your Todo List</h1>
@@ -10,8 +21,8 @@
         <h3>Would you like to create a new todo, {{ current_user.username }}? </h3>
     {% endif %}
 
-    <a href="{{url_for('index')}}">My Dashboard</a>
-    <a href="{{url_for('todo_history')}}">Todo Action History</a>
+    <!-- <a href="{{url_for('index')}}">My Dashboard</a>
+    <a href="{{url_for('todo_history')}}">Todo Action History</a> -->
       
 <div class="container">
     <div class="row">
@@ -151,7 +162,7 @@
     <script>
 
     
-            
+
         function noteStatus(id) {
             const noteDiv = document.getElementById(`note-${id}`);
             const status = noteDiv.querySelector('input[name="done"]').checked;
@@ -173,8 +184,10 @@
 
                         if (status) {
                             noteDiv.classList.add('done-todo');
+                            showFlash("Todo Marked as Completed!", "success");
                         } else {
                             noteDiv.classList.remove('done-todo');
+                            showFlash("Todo Marked as In Progress!", "success");
                         }
                         
                         const inProgressList = document.getElementById("in-progress-list");
@@ -192,6 +205,7 @@
                          
                     } else {
                         alert("Error while updating status!")
+                        showFlash("Error updating todo status!", "danger");
                     }
                 }).then(apiData => {
                     console.log("Message from API:", apiData.message);
@@ -199,6 +213,7 @@
                 .catch(error => {
                     console.error('Error:', error);
                     alert("a network error occured!")
+                    showFlash("Network error occurred while updating todo status!", "danger");
                 });
         }
 
@@ -208,170 +223,178 @@
                 .then(res => {
                     if (!res.ok) {
                         alert("Error while deleting!");
+                        showFlash("Error deleting todo!", "danger");
                         return;
                     }
                     const noteDiv = document.getElementById(`note-${id}`);
                     const wrapper = noteDiv.closest('.container-fluid');
                     wrapper.remove();
+                    showFlash("Todo Deleted Successfully!", "success");
                     
                 })
                 .catch (err => {
                 console.error("Delete error:", err);
                 alert("Network error occurred!");
+                showFlash("Network error occurred while deleting todo!", "danger");
                 });
         }
-                    function openCreateModal() {
+        function openCreateModal() {
 
-                            document.getElementById("createModalTitle").value = "";
-                            document.getElementById("createModalContent").value = "";
-                            document.getElementById("createModalTags").value = "";
+                document.getElementById("createModalTitle").value = "";
+                document.getElementById("createModalContent").value = "";
+                document.getElementById("createModalTags").value = "";
 
-                            const modal = new bootstrap.Modal(document.getElementById('createModal'));
-                            modal.show();
-                        }
+                const modal = new bootstrap.Modal(document.getElementById('createModal'));
+                modal.show();
+            }
 
-                    document.getElementById("createModalForm").addEventListener("submit", function (e) {
+        document.getElementById("createModalForm").addEventListener("submit", function (e) {
 
-                            e.preventDefault();
+                e.preventDefault();
 
-                            const data = {
-                                title: document.getElementById("createModalTitle").value,
-                                content: document.getElementById("createModalContent").value,
-                                tags: document.getElementById("createModalTags").value
-                            };
+                const data = {
+                    title: document.getElementById("createModalTitle").value,
+                    content: document.getElementById("createModalContent").value,
+                    tags: document.getElementById("createModalTags").value
+                };
 
-                            fetch(`{{url_for('todo_create')}}`, {
-                                method: "POST",
-                                headers: {
-                                    "Content-Type": "application/json"
-                                },
-                                body: JSON.stringify(data)
-                            })
-                                .then(res => res.text())
-                                .then(html => {
+                fetch(`{{url_for('todo_create')}}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                })
+                    .then(res => res.text())
+                    .then(html => {
 
-                                    document.getElementById("in-progress-list")
-                                        .insertAdjacentHTML("afterbegin", html);
+                        document.getElementById("in-progress-list")
+                            .insertAdjacentHTML("afterbegin", html);
 
-                                    const modalElement = document.getElementById('createModal');
-                                    const modalInstance = bootstrap.Modal.getInstance(modalElement);
-                                    modalInstance.hide();
-                                })
-                                .catch(err => {
-                                    console.error(err);
-                                    alert("Network error!");
-                                });
+                        const modalElement = document.getElementById('createModal');
+                        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                        modalInstance.hide();
+                        showFlash("Todo Created Successfully!", "success");
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        alert("Network error!");
+                        showFlash("Network error occurred while creating todo!", "danger");
+                    });
 
-                        });
-
-
-                    function openModal(id) {
-                            const noteDiv = document.getElementById(`note-${id}`);
-
-                            const title = noteDiv.dataset.title;
-                            const content = noteDiv.dataset.content;
-                            const tags = noteDiv.dataset.tags;
-
-                            const updated = noteDiv.dataset.updated;
-
-                            document.getElementById('modalUpdatedAt').innerText = "Last updated: " + updated;
-
-                            document.getElementById('modalNoteId').value = id;
-                            document.getElementById('modalTitleInput').value = title;
-                            document.getElementById('modalContentInput').value = content;
-                            document.getElementById('modalTagsInput').value = tags;
-
-                            const modal = new bootstrap.Modal(document.getElementById('noteModal'));
-                            modal.show();
-                        }
-
-                    document.getElementById('modalEditForm').addEventListener('submit', function (e) {
-                            e.preventDefault();
-
-                            const id = document.getElementById('modalNoteId').value;
-
-                            const data = {
-                                title: document.getElementById('modalTitleInput').value,
-                                content: document.getElementById('modalContentInput').value,
-                                tags: document.getElementById('modalTagsInput').value
-                            };
-
-                            fetch(`{{url_for('todo_update',note_id='')}}` + id, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify(data)
-                            }).then(res => {
-                                if (!res.ok) {
-                                    alert("Error while updating!");
-                                    return;
-                                }
-                                return res.json();
-                            }).then(apiData => {
-
-                                const noteDiv = document.getElementById(`note-${id}`);
-
-                                // Update data attributes
-                                noteDiv.dataset.title = apiData.title;
-                                noteDiv.dataset.content = apiData.content;
-                                noteDiv.dataset.tags = apiData.tags;
-
-                                // Update displayed content
-                                noteDiv.querySelectorAll('.note-preview')[0].innerText = apiData.title;
-                                noteDiv.querySelectorAll('.note-preview')[1].innerText = apiData.content;
-                                noteDiv.querySelector('.text-info').innerText = "Tags: " + apiData.tags;
-
-                                noteDiv.dataset.updated = apiData.updated_at;
-                                document.getElementById(`updated-${id}`).innerText = "Last updated: " + apiData.updated_at;
-
-                                const wrapper = noteDiv.closest('.container-fluid');
-                                const inProgressList = document.getElementById("in-progress-list");
-                                const completedList = document.getElementById("completed-list");
-
-                                if (apiData.done) {
-                                    completedList.prepend(wrapper);
-                                } else {
-                                    inProgressList.prepend(wrapper);
-                                }
-                                
-                                // Close modal
-                                const modalElement = document.getElementById('noteModal');
-                                const modalInstance = bootstrap.Modal.getInstance(modalElement);
-                                modalInstance.hide();
-                            })
-                                .catch(err => {
-                                    console.error("Update error:", err);
-                                    alert("Network error occurred!");
-                                });
-                        });
+            });
 
 
+        function openModal(id) {
+                const noteDiv = document.getElementById(`note-${id}`);
 
-                        function openReadModal(id) {
-                                const noteDiv = document.getElementById(`note-${id}`);
+                const title = noteDiv.dataset.title;
+                const content = noteDiv.dataset.content;
+                const tags = noteDiv.dataset.tags;
 
-                                const title = noteDiv.dataset.title;
-                                const content = noteDiv.dataset.content;
-                                const tags = noteDiv.dataset.tags;
+                const updated = noteDiv.dataset.updated;
 
-                                const created = noteDiv.dataset.created;
-                                document.getElementById('readModalCreatedAt').innerText = "Created: " + created;
+                document.getElementById('modalUpdatedAt').innerText = "Last updated: " + updated;
 
-                                document.getElementById('readModalTitle').innerText = title;
-                                document.getElementById('readModalContent').innerText = content;
-                                document.getElementById('readModalTags').innerText = "Tags: " + tags;
+                document.getElementById('modalNoteId').value = id;
+                document.getElementById('modalTitleInput').value = title;
+                document.getElementById('modalContentInput').value = content;
+                document.getElementById('modalTagsInput').value = tags;
 
-                                const modal = new bootstrap.Modal(document.getElementById('readModal'));
-                                modal.show();
-                            }
+                const modal = new bootstrap.Modal(document.getElementById('noteModal'));
+                modal.show();
+            }
 
-                        
+        document.getElementById('modalEditForm').addEventListener('submit', function (e) {
+                e.preventDefault();
 
-                        
-                        document.addEventListener('hide.bs.modal', function () {
-                                if (document.activeElement) {
-                                    document.activeElement.blur();
-                                }
-                            });
+                const id = document.getElementById('modalNoteId').value;
+
+                const data = {
+                    title: document.getElementById('modalTitleInput').value,
+                    content: document.getElementById('modalContentInput').value,
+                    tags: document.getElementById('modalTagsInput').value
+                };
+
+                fetch(`{{url_for('todo_update',note_id='')}}` + id, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                }).then(res => {
+                    if (!res.ok) {
+                        alert("Error while updating!");
+                        return;
+                    }
+                    return res.json();
+                }).then(apiData => {
+
+                    const noteDiv = document.getElementById(`note-${id}`);
+
+                    // Update data attributes
+                    noteDiv.dataset.title = apiData.title;
+                    noteDiv.dataset.content = apiData.content;
+                    noteDiv.dataset.tags = apiData.tags;
+
+                    // Update displayed content
+                    noteDiv.querySelectorAll('.note-preview')[0].innerText = apiData.title;
+                    noteDiv.querySelectorAll('.note-preview')[1].innerText = apiData.content;
+                    noteDiv.querySelector('.text-info').innerText = "Tags: " + apiData.tags;
+
+                    noteDiv.dataset.updated = apiData.updated_at;
+                    document.getElementById(`updated-${id}`).innerText = "Last updated: " + apiData.updated_at;
+
+                    const wrapper = noteDiv.closest('.container-fluid');
+                    const inProgressList = document.getElementById("in-progress-list");
+                    const completedList = document.getElementById("completed-list");
+
+                    showFlash("Todo Updated Successfully!", "success");
+
+                    if (apiData.done) {
+                        completedList.prepend(wrapper);
+                    } else {
+                        inProgressList.prepend(wrapper);
+                    }
+                    
+                    // Close modal
+                    const modalElement = document.getElementById('noteModal');
+                    const modalInstance = bootstrap.Modal.getInstance(modalElement);
+                    modalInstance.hide();
+                })
+                    .catch(err => {
+                        console.error("Update error:", err);
+                        alert("Network error occurred!");
+                        showFlash("Network error occurred while updating todo!", "danger");
+                    });
+            });
+
+
+
+            function openReadModal(id) {
+                    const noteDiv = document.getElementById(`note-${id}`);
+
+                    const title = noteDiv.dataset.title;
+                    const content = noteDiv.dataset.content;
+                    const tags = noteDiv.dataset.tags;
+
+                    const created = noteDiv.dataset.created;
+                    document.getElementById('readModalCreatedAt').innerText = "Created: " + created;
+
+                    document.getElementById('readModalTitle').innerText = title;
+                    document.getElementById('readModalContent').innerText = content;
+                    document.getElementById('readModalTags').innerText = "Tags: " + tags;
+
+                    const modal = new bootstrap.Modal(document.getElementById('readModal'));
+                    modal.show();
+                }
+
+            
+
+            
+            document.addEventListener('hide.bs.modal', function () {
+                    if (document.activeElement) {
+                        document.activeElement.blur();
+                    }
+                });
 
     </script>
 
