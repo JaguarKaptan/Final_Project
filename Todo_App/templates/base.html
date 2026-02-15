@@ -17,24 +17,6 @@
 </head>
 <body>
     
-    <!-- {% with messages = get_flashed_messages()%}
-        {%if messages %}
-            <ul>
-            {%for message in messages%}
-                <li class="text-warning">{{message}}</li>
-            {%endfor%}
-            </ul>
-        {%endif%}
-    {%endwith%} -->
-
-    <!-- {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                 showFlash("{{ message|tojson }}", "{{ category }}");
-            {% endfor %}
-        {% endif %}
-    {% endwith %} -->
-
     <div id="flash-data" style="display: none;">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
