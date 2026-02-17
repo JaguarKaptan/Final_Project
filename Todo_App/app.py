@@ -1,3 +1,4 @@
+import os
 from flask import Flask, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
@@ -5,9 +6,19 @@ from flask_login import LoginManager
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail
 from datetime import timedelta
+from flask_wtf.csrf import CSRFProtect
+from dotenv import load_dotenv
+import os
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
+    
 
 db = SQLAlchemy()
 mail = Mail()
+csrf = CSRFProtect()
+load_dotenv()
+limiter = Limiter(get_remote_address)
 
 def create_app():
     app = Flask(__name__, template_folder='templates')
@@ -18,15 +29,27 @@ def create_app():
     app.config["REMEMBER_COOKIE_DURATION"] = timedelta(days=7)
 
     # Mail Configuration
-    app.config['MAIL_SERVER'] = 'localhost'
-    app.config['MAIL_PORT'] = 8025  # test server port
+    # app.config['MAIL_SERVER'] = 'localhost'
+    # app.config['MAIL_PORT'] = 8025  # test server port
     app.config['MAIL_SUPPRESS_SEND'] = False 
-    app.config['MAIL_DEFAULT_SENDER'] = ('Test Bot', 'test@example.com')
+    # app.config['MAIL_DEFAULT_SENDER'] = ('Test Bot', 'test@example.com')
+
+    app.config["MAIL_SERVER"] = os.environ.get("MAIL_SERVER")
+    app.config["MAIL_PORT"] = int(os.environ.get("MAIL_PORT"))
+    app.config["MAIL_USE_TLS"] = os.environ.get("MAIL_USE_TLS") == "True"
+    app.config["MAIL_USERNAME"] = os.environ.get("MAIL_USERNAME")
+    app.config["MAIL_PASSWORD"] = os.environ.get("MAIL_PASSWORD")
+    app.config["MAIL_DEFAULT_SENDER"] = os.environ.get("MAIL_DEFAULT_SENDER")
 
     mail.init_app(app)
 
+    csrf.init_app(app)
+
+    #NEW
+    limiter.init_app(app)
+
     # will be moved to the .env
-    app.secret_key = '0pp1jGIWBg6QunveBvqyU9vMElA4H0gWjryr_GoTKFc' # will be moved to the .env
+    app.secret_key = os.environ.get("SECRET_KEY") # OLDIE '0pp1jGIWBg6QunveBvqyU9vMElA4H0gWjryr_GoTKFc' # will be moved to the .env
 
     #Initialize the database
     db.init_app(app)

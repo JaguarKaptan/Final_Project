@@ -1,4 +1,4 @@
-function showFlash(message, type = 'success', duration = 3000) {
+function showFlash(message, type = 'success', duration = 5000) {
     const container = document.getElementById('flash-container');
 
     let title = '';
@@ -62,3 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Usage examples:
 // showFlash("Todo created successfully!", "success");
 // showFlash("An error occurred!", "danger", 5000);
+
+function getCSRFToken() {
+    return document.querySelector('meta[name="csrf-token"]').getAttribute("content");
+}

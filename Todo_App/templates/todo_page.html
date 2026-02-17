@@ -15,11 +15,13 @@
 
     {%block content%}
 
-    <h1>Your Todo List</h1>
+    <div class="ms-3">
+        <h1>Your Todo List</h1>
 
-    {% if current_user.is_authenticated %}
-        <h3>Would you like to create a new todo, {{ current_user.username }}? </h3>
-    {% endif %}
+        {% if current_user.is_authenticated %}
+            <h3>Would you like to create a new todo, {{ current_user.username }}? </h3>
+        {% endif %}
+    </div>
       
 <div class="container">
     <div class="row">
@@ -172,7 +174,10 @@
 
                 fetch(`{{url_for('todo_update',note_id='')}}` + id, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        "X-CSRFToken": getCSRFToken()
+                    },
                     body: JSON.stringify(data)
                 }).then(res => {
                     if (res.ok) {
@@ -216,7 +221,12 @@
 
         function deleteNote(id) {
            
-            fetch(`{{url_for('todo_delete',note_id='')}}`+ id, { method: 'POST' })
+            fetch(`{{url_for('todo_delete',note_id='')}}`+ id, { 
+                method: 'POST',
+                headers: {
+                    "X-CSRFToken": getCSRFToken()
+                }
+            })
                 .then(res => {
                     if (!res.ok) {
                         alert("Error while deleting!");
@@ -258,7 +268,8 @@
                 fetch(`{{url_for('todo_create')}}`, {
                     method: "POST",
                     headers: {
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": getCSRFToken()
                     },
                     body: JSON.stringify(data)
                 })
@@ -315,7 +326,9 @@
 
                 fetch(`{{url_for('todo_update',note_id='')}}` + id, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: { 'Content-Type': 'application/json',
+                        "X-CSRFToken": getCSRFToken()
+                    },
                     body: JSON.stringify(data)
                 }).then(res => {
                     if (!res.ok) {

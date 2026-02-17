@@ -1,0 +1,167 @@
+<!-- <!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>{{ subject }}</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #0a0e27;
+      /* main background */
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      background-color: #12172e;
+      /* card background */
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+      border: 1px solid #1f2640;
+    }
+
+    .card {
+      background-color: #1a2038;
+      /* slightly lighter than container */
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      margin-bottom: 20px;
+      color: #e1e8f0;
+      /* text color */
+    }
+
+    h2 {
+      margin: 0 0 10px 0;
+      color: #4fc3f7;
+      /* primary accent */
+    }
+
+    p {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #e1e8f0;
+      /* foreground */
+      margin: 0;
+    }
+
+    .button-container {
+      margin-top: 15px;
+    }
+
+    .button {
+      display: inline-block;
+      background-color: #4fc3f7;
+      /* turquoise primary */
+      color: #12172e !important;
+      /* dark text inside button */
+      padding: 12px 25px;
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: bold;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .button:hover {
+      background-color: #66d0ff;
+      /* lighter hover */
+      transform: translateY(-2px);
+    }
+
+    .footer {
+      font-size: 12px;
+      color: #8b92a8;
+      /* muted foreground */
+      margin-top: 30px;
+      border-top: 1px solid #1f2640;
+      padding-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="card">
+      <h2>{{ title }}</h2>
+    </div>
+    <div class="card">
+      <p>{{ message }}</p>
+    </div>
+    <div class="card button-container">
+      <a class="button" href="{{ verify_url }}">{{ action }}</a>
+    </div>
+    <p class="footer">
+      This email was sent by Notevergent. If you did not request this, you can safely ignore it.
+    </p>
+  </div>
+</body>
+
+</html> -->
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>{{ subject }}</title>
+</head>
+
+<body style="margin:0; padding:0; background-color:#0a0e27; font-family: Arial, sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#0a0e27; padding: 50px 0;">
+    <tr>
+      <td align="center">
+        <!-- Main container -->
+        <table width="600" cellpadding="0" cellspacing="0" border="0"
+          style="background-color:#12172e; border-radius:20px; border:1px solid #1f2640; box-shadow:0 8px 25px rgba(0,0,0,0.4);">
+          <!-- Title -->
+          <tr>
+            <td align="center" style="padding: 30px;">
+              <div style="background-color:#1a2038; border-radius:12px; padding:20px;">
+                <h2 style="color:#4fc3f7; margin:0;">{{ title }}</h2>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Message -->
+          <tr>
+            <td align="center" style="padding: 0 30px 20px 30px;">
+              <div
+                style="background-color:#1a2038; border-radius:12px; padding:20px; color:#e1e8f0; font-size:16px; line-height:1.6;">
+                {{ message }}
+              </div>
+            </td>
+          </tr>
+
+          <!-- Button -->
+          <tr>
+            <td align="center" style="padding: 0 30px 20px 30px;">
+              <div
+                style="background-color:#1a2038; border-radius:12px; padding:20px; color:#e1e8f0; font-size:16px; line-height:1.6;">
+                  <a href="{{ verify_url }}"
+                    style="background-color:#4fc3f7; color:#12172e; text-decoration:none; padding:12px 25px; border-radius:12px; font-weight:bold; display:inline-block;">
+                    {{ action }}
+                  </a>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td align="center" style="padding: 20px; font-size:12px; color:#8b92a8; border-top:1px solid #1f2640;">
+              This email was sent by Notevergent. If you did not request this, you can safely ignore it.
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+
+</html>

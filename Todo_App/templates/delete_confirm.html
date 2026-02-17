@@ -13,7 +13,11 @@
     {% endif %}
 
     <h3>You are about to delete your account, are you sure?</h3>
-    <a href="{{url_for('redirect_delete')}}" class="btn btn-danger">Yes</a>
-    <a href="{{url_for('index')}}" class="btn btn-primary">No</a>
+    <form method="POST" action="{{ url_for('generate_delete_token') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="btn btn-danger">Yes</button>
+        <a href="{{url_for('index')}}" class="btn btn-primary">No</a>
+    </form>
+    
 
     {%endblock%}

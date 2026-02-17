@@ -11,10 +11,11 @@
                 <h1 class="text-center">Forgot password? Don't worry!</h1>
 
                 <form action="{{url_for('send_recovery')}}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                    
                     <div class="mb-4">
                         <label for="username" class="form-label">Help us to find your account:</label>
-                        <input type="text" class="form-control" id="username" placeholder="Username or Email" name="username" autocomplete="off">
+                        <input type="text" class="form-control" id="username" placeholder="Username or Email" name="username" autocomplete="off" required>
                     </div>
 
                     <input class="btn btn-primary w-100 mb-3" type="submit" value="Send Recovery Mail">

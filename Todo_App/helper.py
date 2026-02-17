@@ -4,7 +4,7 @@ from models import Token, Security_logs
 from app import db, mail
 from flask_mail import Message
 import re
-from flask import request, has_request_context
+from flask import render_template, request, has_request_context
 from log_variables import SecurityAction, TokenAction, TokenError
 from model_helper import utc_now_naive
 
@@ -19,6 +19,8 @@ def validate_token(token_str, expected_type: TokenAction):
         return None, TokenError.INVALID_TOKEN_TYPE.value
 
     if record.expire < utc_now_naive():
+        db.session.delete(record)
+        db.session.commit()
         return record, TokenError.TOKEN_EXPIRED.value
 
     return record, None
@@ -44,11 +46,26 @@ def is_valid_email(email):
     pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
     return re.match(pattern, email) is not None
 
-def send_email(to, subject, body):
-    msg = Message(subject, recipients=[to])
-    msg.body = body
-    mail.send(msg)
+# def send_email(to, subject, body, html_body=None):
+#     msg = Message(subject, recipients=[to])
+#     msg.body = body
+#     if html_body:
+#         msg.html = html_body
+#     mail.send(msg)
 
+def send_email(to, subject, template_name, **kwargs):
+    """
+    Send an HTML email using a template.
+    
+    :param to: Alıcı email
+    :param subject: Mail başlığı ve HTML içindeki title
+    :param template_name: templates/email/ içinde .html dosyası
+    :param kwargs: HTML template içinde kullanacağımız değişkenler
+    """
+    html_content = render_template(template_name, subject=subject, **kwargs)
+    msg = Message(subject, recipients=[to], html=html_content)
+    mail.send(msg)
+    
 def create_token(user, token_type, sys=False, hours_valid=1):
     # Secure random token
 

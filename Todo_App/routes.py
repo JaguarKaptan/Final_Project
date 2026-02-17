@@ -1,4 +1,4 @@
-from flask import jsonify, render_template, request, redirect, url_for, flash
+from flask import abort, jsonify, render_template, request, redirect, url_for, flash
 from models import User, Token, Notes, Note_History
 from flask_login import login_user, logout_user, current_user, login_required
 from datetime import datetime, timezone, timedelta
@@ -7,6 +7,7 @@ from log_variables import SecurityAction, TokenAction, TokenError, NoteAction
 from sqlalchemy import desc, or_
 from flask import session
 from flask import get_flashed_messages
+from app import limiter
 
 def register_routes(app, db, bcrypt):
 
@@ -27,8 +28,9 @@ def register_routes(app, db, bcrypt):
     # ======================
     # ACCOUNT OPERATIONS
     # ======================
-    
+    @limiter.limit("5 per minute")
     @app.route('/signup', methods=['GET', 'POST'])
+   
     def signup():
         if request.method == 'GET':
             return render_template('signup.html')
@@ -60,13 +62,23 @@ def register_routes(app, db, bcrypt):
             create_security_logs(user, SecurityAction.ACCOUNT_CREATED)
             token = create_token(user, TokenAction.EMAIL_VERIFICATION)
             verify_url = url_for('verify_mail', token=token, _external=True)
-            send_email(user.email, "Verify your email", f"Click here to verify: {verify_url}")
+
+            send_email(
+            to=user.email,
+            subject="Verify your email",
+            title="Welcome to Notevergent!",
+            template_name="components/mail_template.html",
+            message="Click the button below to verify your email address.",
+            action = "Verify Email",
+            verify_url=verify_url
+            )
+            # send_email(user.email, "Verify your email", f"Click here to verify: {verify_url}")
             create_security_logs(user, SecurityAction.EMAIL_VERIFICATION_SENT)
 
             flash("Account created successfully! Please verify your email in an hour! Otherwise your account will be deleted!", "success")
-            return redirect(url_for('verify_notice'))
+            return redirect(url_for('verify_notice', email=user.email))
         
-
+    @limiter.limit("5 per minute")
     @app.route('/login', methods=['GET', 'POST'])
     def login():
         if request.method == 'GET':
@@ -93,7 +105,8 @@ def register_routes(app, db, bcrypt):
                             #Token expired!
                             flash("Verification code has been expired.", "danger")
                             token = create_token(user, TokenAction.ACCOUNT_DELETION, True)
-                            return redirect(url_for('delete', token=token))  # Just for the testing, in product environment background check must be set
+                            return redirect(url_for('delete_account', token=token))  # Just for the testing, in product environment background check must be set
+                            #return redirect(url_for('delete'))  # Just for the testing, in product environment background check must be set
                         else:
                             remaining = record.expire - utc_now_naive()
                             minutes = int(remaining.total_seconds() // 60)
@@ -102,8 +115,8 @@ def register_routes(app, db, bcrypt):
                     else:
                         flash("E-mail is not verified in specified time, account deleted!", "warning")
                         token = create_token(user, TokenAction.ACCOUNT_DELETION, True)
-                        return redirect(url_for('delete', token=token))  # Just for the testing, in product environment background check must be set
-
+                        return redirect(url_for('delete_account', token=token))  # Just for the testing, in product environment background check must be set
+                        #return redirect(url_for('delete'))  # Just for the testing, in product environment background check must be set
                 create_security_logs(user, SecurityAction.LOGIN_SUCCESS)
                 #login_user(user)
                 session.permanent = False
@@ -128,29 +141,50 @@ def register_routes(app, db, bcrypt):
     def delete_confirm():
         return render_template('delete_confirm.html')
 
-    @app.route('/delete')
-    def redirect_delete():
+    # @app.route('/delete')
+    # def redirect_delete():
+    #     create_security_logs(current_user, SecurityAction.USER_ATTEMPT_DELETE_ACCOUNT)
+    #     token = create_token(current_user, TokenAction.ACCOUNT_DELETION, True)
+    #     return redirect(url_for('delete', token=token))  # Just for the testing, in product environment background check must be set
+
+    # AI Detected Huge Security Flaw, Changed the flow. Now user must confirm his/her action before generating the token. 
+    # Malicious unauthorized access to the delete route via GET request is prevented by adding CSRF and POST request method usage.
+    # After confirmation, token will be generated and user will be redirected to the delete route with the token. 
+    # In delete route, token will be validated and if everything is fine, account will be deleted. 
+    # This flow is more secure because user must confirm his/her action before generating the token. 
+    # Also, token will be generated with a flag that indicates it's for deletion and it will be checked in the delete route. 
+    # If token is not for deletion, it will be rejected.
+
+    @app.route('/delete', methods=['POST'])
+    @login_required
+    def generate_delete_token():
         create_security_logs(current_user, SecurityAction.USER_ATTEMPT_DELETE_ACCOUNT)
-        token = create_token(current_user, TokenAction.ACCOUNT_DELETION, True)
-        return redirect(url_for('delete', token=token))  # Just for the testing, in product environment background check must be set
+        token = create_token(current_user, TokenAction.ACCOUNT_DELETION)
+        return redirect(url_for('delete_account', token=token))
 
-    @app.route('/delete/<token>')
-    def delete(token):
+    @app.route('/delete/<token>',methods=['GET'])
+    def delete_account(token):
 
-
-        
         record, error = validate_token(token,TokenAction.ACCOUNT_DELETION)
 
         if error:
             flash(error, "danger")
             return redirect(url_for('login'))
         
+        # if record.user_id != current_user.user_id:
+        #     abort(403)
+        
         user = record.user
+        create_security_logs(user, SecurityAction.ACCOUNT_DELETED)
 
         db.session.delete(user)
         db.session.commit()
-        create_security_logs(user, SecurityAction.ACCOUNT_DELETED)
-        flash("User has been deleted due to expired verification.", "danger")
+        
+        if user.email_verified == False:
+            flash("Account has been deleted due to expired verification.", "danger")
+        else:
+            flash("Account has been deleted by the user.", "success")
+            
         return redirect(url_for("signup"))
     
     # ======================
@@ -161,6 +195,7 @@ def register_routes(app, db, bcrypt):
     def account_recovery():
         return render_template('recovery.html')
 
+    @limiter.limit("5 per minute")
     @app.route('/send-recovery', methods=['GET','POST'])
     def send_recovery():
 
@@ -179,7 +214,17 @@ def register_routes(app, db, bcrypt):
 
             recover_url = url_for('recover_account', token=token, _external=True)
 
-            send_email(user.email, "Recover your account with", f"Click here to recover: {recover_url}")
+            send_email(
+            to=user.email,
+            subject="Recover your account",
+            title="Welcome to Notevergent!",
+            template_name="components/mail_template.html",
+            message="Click the button below to recover your account.",
+            action = "Recover Account",
+            verify_url=recover_url
+            )
+
+            # send_email(user.email, "Recover your account with", f"Click here to recover: {recover_url}")
 
             create_security_logs(user, SecurityAction.ACCOUNT_RECOVERY_MAIL_SENT)
 
@@ -245,7 +290,8 @@ def register_routes(app, db, bcrypt):
 
     @app.route('/verify')
     def verify_notice():
-        return "Verification e-mail has been sent, please verify your email in an hour! Otherwise your account will be deleted!"
+        email = request.args.get('email')
+        return render_template('verify.html', email=email)
    
 
     @app.route('/verify/<token>')
@@ -498,7 +544,7 @@ def register_routes(app, db, bcrypt):
 
         if request.method == 'POST':
             username = request.form.get('username')
-            auth = request.form.get('auth')
+            # auth = request.form.get('auth')
             password = request.form.get('password')
             confirm = request.form.get('password-confirm')
 
@@ -509,7 +555,7 @@ def register_routes(app, db, bcrypt):
                 flash("Unauthorized Action", "danger")
                 return redirect(request.referrer)
             
-            user = User.query.filter(or_(User.username == username)).first()
+            user = User.query.filter(User.username == current_user.username).first()
 
             if not user:
                 flash("Invalid Username", "danger")
@@ -517,16 +563,16 @@ def register_routes(app, db, bcrypt):
             
             create_security_logs(user, SecurityAction.USER_ATTEMPT_PASSWORD_CHANGE)
 
-            token = create_token(user, TokenAction.PASSWORD_CHANGE)
-            record, error = validate_token(token,TokenAction.PASSWORD_CHANGE)
+            # token = create_token(user, TokenAction.PASSWORD_CHANGE)
+            # record, error = validate_token(token,TokenAction.PASSWORD_CHANGE)
 
-            if error:
-                flash(error, "danger")
-                return redirect(request.referrer)
+            # if error:
+            #     flash(error, "danger")
+            #     return redirect(request.referrer)
 
             user.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
-            db.session.delete(record)
-            db.session.commit()
+            # db.session.delete(record)
+            # db.session.commit()
             create_security_logs(user, SecurityAction.PASSWORD_CHANGED)
             flash("Password has been changed successfully!", "success")
             return redirect(request.referrer)
@@ -535,3 +581,32 @@ def register_routes(app, db, bcrypt):
             flash('Unexpected Error', "danger")
             return redirect(request.referrer)
         
+
+    # @app.route("/test-mail")
+    # def test_mail():
+
+    #     # html_body = render_template(
+    #     # "components/verify-mail.html",
+    #     # subject="Verify your email",
+    #     # title="Welcome to Notevergent!",
+    #     # message="Click the button below to verify your email address:",
+    #     # action = "Verify Email",
+    #     # verify_url="http://127.0.0.1:5000/verify/BcsXrjy5rD23b86pcwksft7KRUBvBVHFn1waUrN296Q"
+    #     # )
+    #     # send_email(
+    #     # to="nikanharugame@gmail.com",
+    #     # subject="Verify your email",
+    #     # body="Click the link to verify.",
+    #     # html_body=html_body
+    #     #  )
+        
+    #     send_email(
+    #         to="nikanharugame@gmail.com",
+    #         subject="Verify your email",
+    #         title="Welcome to Notevergent!",
+    #         template_name="components/verify-mail.html",
+    #         message="Click the button below to verify your email address.",
+    #         action = "Verify Email",
+    #         verify_url="http://127.0.0.1:5000/verify/BcsXrjy5rD23b86pcwksft7KRUBvBVHFn1waUrN296Q"
+    #     )
+    #     return "Mail gönderildi"
