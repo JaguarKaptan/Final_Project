@@ -285,3 +285,18 @@ select.form-select:focus {
     background-color: #1a2345;
 
 }
+
+.bg-card {
+    background-color: $card-bg;
+    border: 1px solid $card-border-color;
+    transition: all 0.25s ease;
+}
+
+.bg-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, .35);
+}
+
+.text-muted-foreground {
+    color: var(--muted-foreground) !important;
+}

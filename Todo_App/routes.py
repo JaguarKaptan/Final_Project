@@ -19,10 +19,22 @@ def register_routes(app, db, bcrypt):
         response.headers["Pragma"] = "no-cache"
         return response
 
+
     @app.route('/')
+    def landing():
+        if current_user.is_authenticated:
+            return redirect(url_for('dashboard'))
+        return render_template('landing.html')
+    
+    @app.route('/dashboard')
     @login_required
-    def index():          
+    def dashboard():
         return render_template('index.html')
+
+    # @app.route('/')
+    # @login_required
+    # def index():     
+    #     return render_template('index.html')
     
 
     # ======================
@@ -83,7 +95,7 @@ def register_routes(app, db, bcrypt):
     def login():
         if request.method == 'GET':
             if current_user.is_authenticated:
-                return redirect(url_for('index'))
+                return redirect(url_for('dashboard'))
             return render_template('login.html')
         elif request.method == 'POST':
             username = request.form.get('username')
@@ -122,7 +134,7 @@ def register_routes(app, db, bcrypt):
                 session.permanent = False
                 login_user(user, remember=remember)
                 flash("Logged in successfully!", "success")
-                return redirect(url_for('index'))
+                return redirect(url_for('dashboard'))
             else:
                 flash("Invalid Username or Password", "danger")
                 create_security_logs(user, SecurityAction.LOGIN_FAILED)
@@ -134,7 +146,7 @@ def register_routes(app, db, bcrypt):
         create_security_logs(current_user, SecurityAction.USER_LOGOUT)
         logout_user()
         flash("You have been logged out!", "success")
-        return redirect(url_for('index'))
+        return redirect(url_for('landing'))
     
     @app.route('/delete_confirm')
     @login_required
@@ -439,13 +451,14 @@ def register_routes(app, db, bcrypt):
 
                 if original_value != new_value:
                     if key == 'done':
-                        original_value = 'DONE' if original_value else 'IN PROGRESS'
-                        new_value = 'DONE' if new_value else 'IN PROGRESS'
-                        action = f"{key.capitalize()} is changed from {original_value}>> to {new_value}"
+                        original_value = 'COMPLETED' if original_value else 'IN PROGRESS'
+                        new_value = 'COMPLETED' if new_value else 'IN PROGRESS'
+                        action = f"Note status is UPDATED from {original_value} >> to {new_value}"
+                        #action = f"{key.capitalize()} is changed from {original_value} >> to {new_value}"
                     elif key == 'content' and len(str(original_value)) > 10:
-                        action = f"{key.capitalize()} area has been updated!"
+                        action = f"{key.capitalize()} area has been UPDATED!"
                     else:
-                        action = f"{key.capitalize()} is changed from {original_value}>> to {new_value}"
+                        action = f"{key.capitalize()} is UPDATED from {original_value} >> to {new_value}"
                     
                     changes.append(action)
 
@@ -463,7 +476,7 @@ def register_routes(app, db, bcrypt):
                 "content": note.content,
                 "tags": note.tags,
                 "done": note.done,
-                "updated_at": note.updated_at.strftime("%d.%m.%Y %H:%M")
+                "updated_at": note.updated_at.isoformat() #strftime("%d.%m.%Y %H:%M")
             }), 200
             
         else:

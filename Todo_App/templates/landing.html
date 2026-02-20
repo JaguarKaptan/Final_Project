@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Welcome to notevergent{% endblock %}
+{% block content %}
+
+    <section class="min-vh-100 d-flex flex-column justify-content-center">
+
+        <!-- Top Right Auth Buttons -->
+        <div class="position-absolute top-0 end-0 p-4">
+            <a href="{{ url_for('login') }}" class="btn btn-outline-primary me-2 rounded-3 px-4">
+                Log in
+            </a>
+            <a href="{{ url_for('signup') }}" class="btn btn-primary rounded-3 px-4">
+                Sign up
+            </a>
+        </div>
+
+        <div class="container text-center">
+
+            <!-- Logo + Title -->
+            <div class="mb-4">
+                <i class="bi bi-x-diamond-fill notevergent-logo fs-1 me-2"></i>
+                <span class="display-4 fw-bold align-middle text-primary">notevergent</span>
+
+                    <div class="lead fs-4 text-muted mt-3">
+                        Tune your own note.
+                        <span class="fst-italic text-muted small ms-2">
+                            — pun intended.
+                        </span>
+                    </div>
+            </div>
+
+
+
+            <!-- Subtitle -->
+            <p class="lead text-muted-foreground mx-auto" style="max-width: 600px;">
+                A calm and minimalist task organizer.
+                Built to reduce friction, not add more of it.
+            </p>
+
+            <!-- Features -->
+            <div class="row mt-5 gy-4 justify-content-center">
+
+                <div class="col-md-4">
+                    <div class="p-4 rounded-4 bg-card h-100">
+                        <div class="mb-3">
+                            <i class="bi bi-check2-square fs-2 text-primary"></i>
+                        </div>
+                        <h5 class="fw-semibold">Simple & Clear</h5>
+                        <p class="text-muted small">
+                            Distraction-free interface that helps you focus on what matters
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="p-4 rounded-4 bg-card h-100">
+                        <div class="mb-3">
+                            <i class="bi bi-gem fs-2" style="color: var(--secondary);"></i>
+                        </div>
+                        <h5 class="fw-semibold">Made for You</h5>
+                        <p class="text-muted small">
+                            Created with sensitivity to different working styles
+                            and attention patterns.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="p-4 rounded-4 bg-card h-100">
+                        <div class="mb-3">
+                            <i class="bi bi-stars fs-2 text-primary"></i>
+                        </div>
+                        <h5 class="fw-semibold">Stay Organized</h5>
+                        <p class="text-muted small">
+                            Turn ideas into structured tasks
+                            without overwhelming your workspace.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- CTA -->
+            <div class="mt-5">
+                <a href="{{ url_for('signup') }}" class="btn btn-primary px-5 py-3 rounded-3 fw-semibold">
+                    Get Started
+                </a>
+            </div>
+
+            <!-- Footer -->
+            <div class="mt-5 small text-muted">
+                CS50x Final Project • Built with care for those who think differently
+            </div>
+
+        </div>
+    </section>
+
+{% endblock %}

@@ -1,10 +1,11 @@
 <div class="container-fluid">
     <div class="row g-2 p-2 rounded-3 flex-column justify-content-center align-items-center">
 
-        <div class="col-6 mx-auto bg-secondary rounded-3 border border-info p-3 notes {% if note.done %} done-todo {% endif %}"
+        <div class="col-5 mx-auto bg-secondary rounded-3 border border-info p-3 notes {% if note.done %} done-todo {% endif %}"
             id="note-{{note.id}}" data-title="{{note.title}}" data-content="{{note.content}}" data-tags="{{note.tags}}"
-            data-updated="{{note.updated_at.strftime('%d.%m.%Y %H:%M')}}"
-            data-created="{{note.created_at.strftime('%d.%m.%Y %H:%M')}}">
+            data-updated="{{note.updated_at.isoformat()}}"
+            data-created="{{note.created_at.isoformat()}}">
+             <!-- strftime('%d.%m.%Y %H:%M') -->
 
             <div class="d-flex flex-column">
                 <div class="note-content">
@@ -12,8 +13,8 @@
                         <small id="done-{{note.id}}" class="text-muted">
                             Status: {% if note.done %} Completed {% else %} In Progress {% endif %}
                         </small>
-                        <small id="updated-{{note.id}}" class="text-warning">
-                            Last updated: {{ note.updated_at.strftime("%d.%m.%Y %H:%M") }}
+                        <small id="updated-{{note.id}}" class="text-warning utc-time">
+                            Last updated: {{ note.updated_at.isoformat() }}
                         </small>
                     </div>
 
@@ -30,12 +31,12 @@
                 <div class="d-flex justify-content-end align-items-center gap-2 mt-3">
 
                     <button class="btn btn-danger btn-sm" onclick="event.stopPropagation(); deleteNote('{{note.id}}')">
-                        Delete
+                        <i class="bi bi-trash-fill"></i> Delete 
                     </button>
 
                     <button class="btn btn-warning btn-sm" onclick="event.stopPropagation(); openModal('{{note.id}}')"
                         style="cursor:pointer;">
-                        Edit
+                        <i class="bi bi-pencil-square"></i> Edit
                     </button>
 
                     <div class="form-check">
