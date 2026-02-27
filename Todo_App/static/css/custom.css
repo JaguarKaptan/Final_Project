@@ -1,4 +1,6 @@
 @charset "UTF-8";
+/* Colour palette and design is generated using Figma AI and implemented to the project using Bootstrap.
+AI used to implement CSS variables for consistent theming, override Bootstrap variables, and create custom styles for various components like buttons, cards, and dropdowns. */
 /* CSS Variables */
 :root {
   --background: #0a0e27;

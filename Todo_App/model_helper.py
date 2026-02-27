@@ -8,6 +8,9 @@ def utc_now_naive():
     return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
+# AI (Chatgpt) assisted: Generated suggestion for the function below to use secrets module.
+# Method learned and applied to creat unpredictable and unique short ids.
+
 alphabet = string.ascii_uppercase + string.digits  # A-Z + 0-9
 
 def generate_unique_short_id(length=6):

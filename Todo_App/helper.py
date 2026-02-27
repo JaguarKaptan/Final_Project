@@ -34,6 +34,9 @@ def create_security_logs(user, action):
     ip_address = None
     user_agent = None
 
+    # AI (Chatgpt) assisted: Generated suggestion for capturing IP adress and user agent information beside action of the user.
+    # ip adress and user agent concepts learned and applied.
+
     if has_request_context():
         ip_address = request.headers.get('X-Forwarded-For', request.remote_addr)
         user_agent = request.user_agent.string
@@ -53,21 +56,22 @@ def is_valid_email(email):
 #         msg.html = html_body
 #     mail.send(msg)
 
+
+# AI (Chatgpt) assisted: To optimize the mail sending process and to create html content for the mails.
 def send_email(to, subject, template_name, **kwargs):
     """
     Send an HTML email using a template.
     
-    :param to: Alıcı email
-    :param subject: Mail başlığı ve HTML içindeki title
-    :param template_name: templates/email/ içinde .html dosyası
-    :param kwargs: HTML template içinde kullanacağımız değişkenler
+    :param to: Receiver email
+    :param subject: Mail title and HTML title
+    :param template_name: .html folder in templates/email/  
+    :param kwargs: function parameters to be used in the template
     """
     html_content = render_template(template_name, subject=subject, **kwargs)
     msg = Message(subject, recipients=[to], html=html_content)
     mail.send(msg)
     
 def create_token(user, token_type, sys=False, hours_valid=1):
-    # Secure random token
 
     if isinstance(token_type, TokenAction):
         token_type = token_type.value

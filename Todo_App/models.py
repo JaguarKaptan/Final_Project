@@ -28,6 +28,7 @@ class User(db.Model, UserMixin):
 
     note_history = db.relationship("Note_History", back_populates="user", cascade="all, delete-orphan") #added new
 
+    # AI (chatgpt) assited: Generated suggestion for the __repr__ method to provide a more informative string representation of the User object.
     def __repr__(self):
         return f'<User: {self.username}, E-mail: {self.email}>'
     

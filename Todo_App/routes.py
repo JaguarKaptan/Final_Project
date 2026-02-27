@@ -159,7 +159,7 @@ def register_routes(app, db, bcrypt):
     #     token = create_token(current_user, TokenAction.ACCOUNT_DELETION, True)
     #     return redirect(url_for('delete', token=token))  # Just for the testing, in product environment background check must be set
 
-    # AI Detected Huge Security Flaw, Changed the flow. Now user must confirm his/her action before generating the token. 
+    # AI (chatgpt) Detected Huge Security Flaw, Changed the flow. Now user must confirm his/her action before generating the token. 
     # Malicious unauthorized access to the delete route via GET request is prevented by adding CSRF and POST request method usage.
     # After confirmation, token will be generated and user will be redirected to the delete route with the token. 
     # In delete route, token will be validated and if everything is fine, account will be deleted. 
@@ -443,6 +443,9 @@ def register_routes(app, db, bcrypt):
             note.done = data.get('done', note.done) #data['done']
             note.updated_at = utc_now_naive()
 
+
+            # AI (Gemini) assisted: Minor fixes to bugs and To create optimized and clean code.
+
             fields_to_check = ['title', 'content', 'tags', 'done']
             changes = []
             for key in fields_to_check:
@@ -491,11 +494,12 @@ def register_routes(app, db, bcrypt):
         note_history = Note_History.query.filter(Note_History.user_id == current_user.user_id).order_by(Note_History.created_at.desc()).all()
         return render_template('todo_history.html', notes=note_history)
     
-    # Gemini help on this part.
     @app.route('/api/todo-history', methods=['GET'])
     @login_required
     def api_todo_history():
-       
+       # AI (Gemini) assisted: Generated suggestion for filtering and sorting the note history records based on query parameters.
+       # Query parameters method learned and applied.
+
         filter_value = request.args.get('filter', 'all') 
         sort_value = request.args.get('sort', 'desc')
         
@@ -532,8 +536,6 @@ def register_routes(app, db, bcrypt):
         else: 
             query = query.order_by(Note_History.created_at.desc())
         
-     
-
 
         all_history_records = query.all() 
 
@@ -607,14 +609,14 @@ def register_routes(app, db, bcrypt):
     #     # verify_url="http://127.0.0.1:5000/verify/BcsXrjy5rD23b86pcwksft7KRUBvBVHFn1waUrN296Q"
     #     # )
     #     # send_email(
-    #     # to="nikanharugame@gmail.com",
+    #     # to="mail@gmail.com",
     #     # subject="Verify your email",
     #     # body="Click the link to verify.",
     #     # html_body=html_body
     #     #  )
         
     #     send_email(
-    #         to="nikanharugame@gmail.com",
+    #         to="mail@gmail.com",
     #         subject="Verify your email",
     #         title="Welcome to Notevergent!",
     #         template_name="components/verify-mail.html",
@@ -622,4 +624,4 @@ def register_routes(app, db, bcrypt):
     #         action = "Verify Email",
     #         verify_url="http://127.0.0.1:5000/verify/BcsXrjy5rD23b86pcwksft7KRUBvBVHFn1waUrN296Q"
     #     )
-    #     return "Mail gönderildi"
+    #     return "Mail Sent!"
