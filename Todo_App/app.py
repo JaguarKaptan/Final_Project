@@ -8,7 +8,6 @@ from flask_mail import Mail
 from datetime import timedelta
 from flask_wtf.csrf import CSRFProtect
 from dotenv import load_dotenv
-import os
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
@@ -24,14 +23,14 @@ def create_app():
     app = Flask(__name__, template_folder='templates')
     app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI')
 
-    app.config["SESSION_PERMANENT"] = False
-    app.config["SESSION_TYPE"] = "filesystem"
-    app.config["REMEMBER_COOKIE_DURATION"] = timedelta(days=7)
+    app.config["SESSION_PERMANENT"] = os.environ.get("SESSION_PERMANENT", "False") == "True"
+    app.config["SESSION_TYPE"] = os.environ.get("SESSION_TYPE", "filesystem")
+    app.config["REMEMBER_COOKIE_DURATION"] = os.environ.get("REMEMBER_COOKIE_DURATION", "7")  # default to 7 days
 
     # Mail Configuration
     # app.config['MAIL_SERVER'] = 'localhost'
     # app.config['MAIL_PORT'] = 8025  # test server port
-    app.config['MAIL_SUPPRESS_SEND'] = False 
+    app.config['MAIL_SUPPRESS_SEND'] = os.environ.get("MAIL_SUPPRESS_SEND", "False") == "True"
     # app.config['MAIL_DEFAULT_SENDER'] = ('Test Bot', 'test@example.com')
 
     app.config["MAIL_SERVER"] = os.environ.get("MAIL_SERVER")
