@@ -6,8 +6,8 @@ venv/
 .vscode/
 not.txt
 notes.txt
-Todo_App/instance/myapp.db
-Todo_App/migrations
+Notevergent/instance/myapp.db
+Notevergent/migrations
 Oldies
 
 # Node/NPM Files
