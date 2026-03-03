@@ -59,6 +59,15 @@ $input-color: #e1e8f0;
 
 $border-color: #1f2640;
 
+// Tooltip colours are set
+$tooltip-bg: #f8f9fa; 
+$tooltip-color: #212529; 
+$tooltip-opacity: 1; 
+$tooltip-padding-y: .5rem;
+$tooltip-padding-x: .8rem; 
+$tooltip-border-radius: .5rem; 
+
+
 
 .form-control[readonly],
 .form-control:disabled {
@@ -94,14 +103,16 @@ select.form-select {
     
 }
 
-select.form-select:focus {
-    border-color: #3a4e7a;
-    outline: none;
-    box-shadow: 0 0 0 0.2rem rgba(58, 78, 122, .25);
-}
-
-
 @import "../../node_modules/bootstrap/scss/bootstrap";
+
+.password-toggle {
+    float: right;
+    margin-top: -35px;
+    right: 10px;
+    position: relative;
+    z-index: 2;
+    cursor: pointer; 
+}
 
 .btn-close {
     filter: none;

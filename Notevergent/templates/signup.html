@@ -1,38 +1,61 @@
-{%extends "base.html"%}
-{%block title%} Signup Page {%endblock%}
 
-{%block content%}
+{% extends "base.html" %}
+{% block title %} Signup Page {% endblock %}
 
-<div class="container-fluid bg-dark vh-100">
+{% block content %}
+
+<div class="container-fluid bg-dark min-vh-100 d-flex align-items-center">
     <div class="container">
         <div class="row vh-100 align-items-center justify-content-center">
-            <div class="col-sm-8 col-md-6 col-lg-4 bg-secondary rounded-5 p-4 shadow text-light">
+            <div class="col-11 col-sm-9 col-md-7 col-lg-5 col-xl-4 bg-secondary rounded-5 p-4 shadow text-light">
                 <h1 class="text-center">Sign Up</h1>
 
                 <form action="{{url_for('signup')}}" method='POST'>
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <div class="mb-4">
-                        <label for="username" class="form-label">Username:</label>
-                        <input type="text" class="form-control" id="username" placeholder="Username" name="username" autocomplete="off" required>
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username: <i class="bi bi-info-circle ms-1 text-info" style="cursor: pointer;" data-bs-toggle="tooltip"
+                            data-bs-custom-class="custom-tooltip" data-bs-placement="top"
+                            title="Your unique identifier on Notevergent. Can not be changed later."></i>
+                        </label>
+                        <input type="text" class="form-control" id="username" placeholder="Username" name="username" minlength="4" maxlength="20" pattern="^[a-zA-Z0-9_]+$" 
+                            title="Username must be 4-20 characters and can only contain letters, numbers, and underscores."
+                            autocomplete="off" required>
                     </div>
 
-                    <div class="mb-4">
-                        <label for="email" class="form-label">Email:</label>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email: <i class="bi bi-info-circle ms-1 text-info" style="cursor: pointer;" data-bs-toggle="tooltip"
+                            data-bs-custom-class="custom-tooltip" data-bs-placement="top"
+                            title="We'll send a verification link to this address."></i>
+                        </label>
                         <input type="email" class="form-control" id="email" placeholder="E-mail" name="email" autocomplete="off" required>
                     </div>
 
-                    <div class="mb-4">
-                        <label for="password" class="form-label">Password:</label>
-                        <input type="password" class="form-control" id="password" placeholder="Password" name="password" required>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password:
+                            <i class="bi bi-info-circle ms-1 text-info" style="cursor: pointer;" data-bs-toggle="tooltip"
+                                data-bs-custom-class="custom-tooltip" data-bs-placement="top"
+                                title="Password must be 8-64 characters and can contain letters, numbers, and special characters. Use a mix of letters and numbers."></i>
+                        </label>
+
+                        <input type="password" class="form-control" id="password" placeholder="Min 8 Characters" name="password" minlength="8" maxlength="64" pattern="^[a-zA-Z0-9_!@#$%^&*()-+]+$" 
+                        title="Password must be 8-64 characters and can contain letters, numbers, and special characters." required>
+                        <i class="bi bi-eye-slash text-light fs-5 password-toggle"></i>
+
                     </div>
 
-                    <div class="mb-4">
+                    <div class="mb-3">
                         <label for="password-confirm" class="form-label">Password Confirmation:</label>
+                    
                         <input type="password" class="form-control" id="password-confirm" placeholder="Password Again" name="password-confirm" required>
+                        <i class="bi bi-eye-slash text-light fs-5 password-toggle"></i>
+                
                     </div>
 
                     <input class="btn btn-primary w-100 mb-3" type="submit" value="Sign Up">
-                    <label class="form-check-label" for="login">Do you already have an account?</label> <br>
+                    <!-- <label class="form-check-label mb-2" for="login">Do you already have an account?</label> <br>
+                    <a class="btn btn-success" id="login" href="{{url_for('login')}}">Login Page</a> -->
+
+                    <p class="mb-2 text-light">Do you already have an account?</p>
                     <a class="btn btn-success" id="login" href="{{url_for('login')}}">Login Page</a>
                 </form>
 
@@ -41,6 +64,91 @@
     </div>
 </div>
 
+<!-- <script>
+    document.addEventListener("DOMContentLoaded", function () {
+       const togglePassword = document.querySelector('#togglePassword');
+       const passwordField = document.querySelector('#password');
     
+       const togglePasswordConfirm = document.querySelector('#togglePasswordConfirm');
+        const passwordFieldConfirm = document.querySelector('#password-confirm');
 
-{%endblock%}
+       togglePassword.addEventListener('click', (e) => {
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+            e.target.classList.toggle('bi-eye');
+            e.target.classList.toggle('bi-eye-slash');
+       })
+
+        togglePasswordConfirm.addEventListener('click', (e) => {
+            const type = passwordFieldConfirm.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordFieldConfirm.setAttribute('type', type);
+            e.target.classList.toggle('bi-eye');
+            e.target.classList.toggle('bi-eye-slash');
+        })
+
+        let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+    });
+</script> -->
+
+{% endblock %}
+
+
+
+ <!-- <div class="container-fluid bg-dark min-vh-100 d-flex align-items-center">
+    <div class="container">
+        <div class="row vh-100 align-items-center justify-content-center">
+            <div class="col-11 col-sm-9 col-md-7 col-lg-5 col-xl-4 bg-secondary rounded-5 p-4 shadow text-light">
+                <h1 class="text-center">Sign Up</h1>
+
+                <form action="{{url_for('signup')}}" method='POST'>
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username:</label>
+                        <input type="text" class="form-control" id="username" placeholder="Username" name="username"
+                            minlength="4" maxlength="20" pattern="^[a-zA-Z0-9_]+$"
+                            title="Username must be 4-20 characters and can only contain letters, numbers, and underscores."
+                            autocomplete="off" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">
+                            Email:
+                            <i class="bi bi-info-circle ms-1 text-info" style="cursor: pointer;"
+                                data-bs-toggle="tooltip" data-bs-custom-class="custom-tooltip" data-bs-placement="top"
+                                title="We'll send a verification link to this address."></i>
+                        </label>
+                        <input type="email" class="form-control" id="email" placeholder="E-mail" name="email"
+                            autocomplete="off" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password:</label>
+                        <div class="d-flex align-items-center">
+                            <input type="password" class="form-control" id="password" placeholder="Min 8 Characters"
+                                name="password" minlength="8" maxlength="64" required>
+                            <button class="password-toggle-btn fs-4" type="button" id="togglePassword">
+                                <i class="bi bi-eye-slash" id="toggleIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password-confirm" class="form-label">Password Confirmation:</label>
+                        <input type="password" class="form-control" id="password-confirm" placeholder="Password Again"
+                            name="password-confirm" required>
+                    </div>
+
+                    <input class="btn btn-primary w-100 mb-3" type="submit" value="Sign Up">
+                    <label class="form-check-label mb-2" for="login">Do you already have an account?</label> <br>
+                    <a class="btn btn-success" id="login" href="{{url_for('login')}}">Login Page</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+ -->

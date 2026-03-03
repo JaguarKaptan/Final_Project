@@ -61,12 +61,6 @@ select.form-select {
   background-size: 0.65rem auto;
 }
 
-select.form-select:focus {
-  border-color: #3a4e7a;
-  outline: none;
-  box-shadow: 0 0 0 0.2rem rgba(58, 78, 122, 0.25);
-}
-
 /*!
  * Bootstrap  v5.3.0 (https://getbootstrap.com/)
  * Copyright 2011-2023 The Bootstrap Authors
@@ -2802,12 +2796,12 @@ textarea.form-control-lg {
   z-index: 5;
   display: none;
   max-width: 100%;
-  padding: 0.25rem 0.5rem;
+  padding: 0.5rem 0.8rem;
   margin-top: 0.1rem;
   font-size: 0.875rem;
   color: #fff;
   background-color: var(--bs-success);
-  border-radius: var(--bs-border-radius);
+  border-radius: 0.5rem;
 }
 
 .was-validated :valid ~ .valid-feedback,
@@ -2892,12 +2886,12 @@ textarea.form-control-lg {
   z-index: 5;
   display: none;
   max-width: 100%;
-  padding: 0.25rem 0.5rem;
+  padding: 0.5rem 0.8rem;
   margin-top: 0.1rem;
   font-size: 0.875rem;
   color: #fff;
   background-color: var(--bs-danger);
-  border-radius: var(--bs-border-radius);
+  border-radius: 0.5rem;
 }
 
 .was-validated :invalid ~ .invalid-feedback,
@@ -5765,14 +5759,14 @@ textarea.form-control-lg {
 .tooltip {
   --bs-tooltip-zindex: 1080;
   --bs-tooltip-max-width: 200px;
-  --bs-tooltip-padding-x: 0.5rem;
-  --bs-tooltip-padding-y: 0.25rem;
+  --bs-tooltip-padding-x: 0.8rem;
+  --bs-tooltip-padding-y: 0.5rem;
   --bs-tooltip-margin: ;
   --bs-tooltip-font-size: 0.875rem;
-  --bs-tooltip-color: var(--bs-body-bg);
-  --bs-tooltip-bg: var(--bs-emphasis-color);
-  --bs-tooltip-border-radius: var(--bs-border-radius);
-  --bs-tooltip-opacity: 0.9;
+  --bs-tooltip-color: #212529;
+  --bs-tooltip-bg: #f8f9fa;
+  --bs-tooltip-border-radius: 0.5rem;
+  --bs-tooltip-opacity: 1;
   --bs-tooltip-arrow-width: 0.8rem;
   --bs-tooltip-arrow-height: 0.4rem;
   z-index: var(--bs-tooltip-zindex);
@@ -11948,6 +11942,15 @@ textarea.form-control-lg {
     display: none !important;
   }
 }
+.password-toggle {
+  float: right;
+  margin-top: -35px;
+  right: 10px;
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+}
+
 .btn-close {
   filter: none;
   opacity: 1;

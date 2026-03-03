@@ -52,6 +52,18 @@ def register_routes(app, db, bcrypt):
             password = request.form.get('password')
             confirm = request.form.get('password-confirm') 
 
+            if len(username) < 4 or len(username) > 20:
+                flash("Username must be between 4 and 20 characters.", "danger")
+                return redirect(url_for('signup'))
+            
+            if len(password) < 8:
+                flash("Password must be at least 8 characters long.", "danger")
+                return redirect(url_for('signup'))
+
+            if password.isdigit():
+                flash("Password cannot be only numbers.", "danger")
+                return redirect(url_for('signup'))
+
             if User.query.filter(or_(User.username == username, User.email == email)).first():
                 flash('This username is already exist!')
                 return redirect(url_for('signup'))
@@ -277,6 +289,14 @@ def register_routes(app, db, bcrypt):
             flash(error, "danger")
             return redirect(url_for('login'))
 
+            
+        if len(password) < 8:
+            flash("Password must be at least 8 characters long.", "danger")
+            return redirect(request.referrer)
+
+        if password.isdigit():
+            flash("Password cannot be only numbers.", "danger")
+            return redirect(request.referrer)
        
         
         if not password == confirm:
@@ -563,11 +583,21 @@ def register_routes(app, db, bcrypt):
             password = request.form.get('password')
             confirm = request.form.get('password-confirm')
 
+            if len(password) < 8:
+                flash("Password must be at least 8 characters long.", "danger")
+                return redirect(request.referrer)
+
+            if password.isdigit():
+                flash("Password cannot be only numbers.", "danger")
+                return redirect(request.referrer)
+        
             if not password == confirm:
                 flash("Passwords do not match", "danger")
                 return redirect(request.referrer)
             if not username == current_user.username:
                 flash("Unauthorized Action", "danger")
+                flash(current_user.username, "danger")
+                flash(username, "danger")
                 return redirect(request.referrer)
             
             user = User.query.filter(User.username == current_user.username).first()

@@ -52,7 +52,7 @@
                             <h6 class="mb-0">Mail <small><span class="badge rounded-pill text-bg-danger ">Unverified</span></small></h6>
                             
                             {%endif%}
-                            <small class="text-body-secondary">{{ current_user.email }}</small>
+                            <small class="text-body-secondary text-break w-100">{{ current_user.email }}</small>
 
                             
                         </div>
@@ -94,7 +94,7 @@
         </div>
         
 
-            <div class="container-fluid">
+            <!-- <div class="container-fluid">
                 <div class="row g-2 p-2 rounded-3">
                     <h6 class="mb-0">Quick Actions</h6>
                     <div class="col bg-secondary rounded-3 border border-info py-3">
@@ -110,6 +110,27 @@
                         </div>
                     </div>  
         
+                </div>
+            </div> -->
+
+            <div class="container-fluid mt-3">
+                <div class="row g-2 p-2 rounded-3">
+                    <h6 class="mb-0">Quick Actions</h6>
+                    <div class="col-12 bg-secondary rounded-3 border border-info py-3">
+                        
+                        <div class="d-flex flex-wrap gap-2 p-3 justify-content-start">
+                            <a class="btn btn-primary flex-grow-1 flex-sm-grow-0" href="{{url_for('todo_page')}}" role="button">
+                                <i class="bi bi-ui-checks-grid fs-5 me-2"></i> Go to Todo List
+                            </a>
+                            <a class="btn btn-primary flex-grow-1 flex-sm-grow-0" href="{{url_for('todo_history')}}" role="button">
+                                <i class="bi bi-clock-history fs-5 me-2"></i> Go to Todo History
+                            </a>
+                            <a class="btn btn-primary flex-grow-1 flex-sm-grow-0 text-white view-profile" data-bs-toggle="modal"
+                                data-bs-target="#staticBackdrop" href="#" role="button">
+                                <i class="bi bi-person-fill fs-5 me-2"></i> View Profile
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
     {% endif %}

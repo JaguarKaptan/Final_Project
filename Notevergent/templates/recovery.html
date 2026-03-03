@@ -14,7 +14,11 @@
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                    
                     <div class="mb-4">
-                        <label for="username" class="form-label">Help us to find your account:</label>
+                        <label for="username" class="form-label">Help us to find your account: 
+                            <i class="bi bi-info-circle ms-1 text-info" style="cursor: pointer;" data-bs-toggle="tooltip"
+                                data-bs-custom-class="custom-tooltip" data-bs-placement="top"
+                                title="Your email or username - which is your unique identifier on Notevergent."></i>
+                        </label>
                         <input type="text" class="form-control" id="username" placeholder="Username or Email" name="username" autocomplete="off" required>
                     </div>
 
@@ -25,6 +29,5 @@
         </div>
     </div>
 </div>
-
 
 {%endblock%}

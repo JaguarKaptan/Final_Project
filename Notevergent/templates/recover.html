@@ -14,14 +14,19 @@
                         <input type="hidden" name="auth" value="{{ auth }}">
 
                     <div class="mb-4">
-                        <label for="password" class="form-label">Password:</label>
-                        <input type="password" class="form-control" id="password" placeholder="Password" name="password"
+                        <label for="password" class="form-label">New Password:
+                            <i class="bi bi-info-circle ms-1 text-info" style="cursor: pointer;" data-bs-toggle="tooltip"
+                                data-bs-custom-class="custom-tooltip" data-bs-placement="top"
+                                title="Password must be 8-64 characters and can contain letters, numbers, and special characters. Use a mix of letters and numbers."></i>
+                        </label>
+                        <input type="password" class="form-control" id="password" placeholder="New Password" name="password"
                             required>
+                        <i class="bi bi-eye-slash text-light fs-5 password-toggle"></i>
                     </div>
 
                     <div class="mb-4">
-                        <label for="password-confirm" class="form-label">Password Confirmation:</label>
-                        <input type="password" class="form-control" id="password-confirm" placeholder="Password Again"
+                        <label for="password-confirm" class="form-label">New Password Confirmation:</label>
+                        <input type="password" class="form-control" id="password-confirm" placeholder="New Password Again"
                             name="password-confirm" required>
                     </div>
 

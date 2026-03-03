@@ -25,18 +25,25 @@
         {% endif %}
     </div>
       
-<div class="container">
-    <div class="row">
-        <div class="col d-flex justify-content-end">
-            <button type="button" class="btn btn-clean d-flex align-items-center gap-2" onclick="openCreateModal()">
-                <i class="bi bi-plus-circle-dotted fs-3"></i>
-                New Todo
-            </button>
+        <div class="container">
+            <div class="row">
+                <div class="col d-flex justify-content-end">
+                    <button type="button" class="btn btn-clean d-flex align-items-center gap-2" onclick="openCreateModal()">
+                        <i class="bi bi-plus-circle-dotted fs-3"></i>
+                        New Todo
+                    </button>
+                </div>
+            </div>
         </div>
-    </div>
-</div>
 
-    {% if current_user.owned_notes %}
+        {% if not current_user.owned_notes %}
+        <div class="container-fluid">
+            <div id="empty-state-msg" class="row g-2 p-2 rounded-3 flex-column justify-content-center align-items-center">
+                <h3 class="mt-4">You don't have any planted seeds... <i class="bi bi-rainbow text-warning"></i></h3>
+                <hr>
+            </div>
+        </div>
+        {% endif %}
 
         <div class="container">
             <div class="row g-2 p-2 rounded-3 flex-column justify-content-center align-items-center">
@@ -45,6 +52,7 @@
             </div>
         </div>
         
+    
         <div id="in-progress-list">
         {% for note in in_progress %}
             {% include "components/_note_card.html" %}
@@ -64,6 +72,7 @@
                 {% include "components/_note_card.html" %}
             {% endfor %}
         </div>
+
 
 
         <div class="modal fade" id="createModal" tabindex="-1">
@@ -154,9 +163,7 @@
                 </div>
             </div>
         </div>
-    {% else %}
-        <h4>You don't have any notes!</h4>
-    {% endif %}
+
     
     <!-- TODO: -->
 
@@ -241,6 +248,13 @@
                     const wrapper = noteDiv.closest('.container-fluid');
                     wrapper.remove();
                     showFlash("Todo Deleted Successfully!", "success");
+
+                    const inProgressCount = document.getElementById("in-progress-list").children.length;
+                    const completedCount = document.getElementById("completed-list").children.length;
+
+                    if (inProgressCount === 0 && completedCount === 0) {
+                        location.reload();
+                    }
                     
                 })
                 .catch (err => {
@@ -281,8 +295,12 @@
                     .then(res => res.text())
                     .then(html => {
 
-                        document.getElementById("in-progress-list")
-                            .insertAdjacentHTML("afterbegin", html);
+                        document.getElementById("in-progress-list").insertAdjacentHTML("afterbegin", html);
+                        
+                            const emptyMsg = document.getElementById("empty-state-msg");
+                        if (emptyMsg) {
+                            emptyMsg.remove();
+                        }
 
                         const modalElement = document.getElementById('createModal');
                         const modalInstance = bootstrap.Modal.getInstance(modalElement);
