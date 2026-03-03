@@ -63,23 +63,3 @@
     </style>
     
     {% endblock %}
-
-<!-- 
-
-    
-    <h1>Account Delete Confirmation Page</h1>
-    
-    {% if current_user.is_authenticated %}
-    <h3>Hello, {{ current_user.username }} </h3>
-    {% else %}
-    <h3>Hello!</h3>
-    {% endif %}
-    
-    <h3>You are about to delete your account, are you sure?</h3>
-    <form method="POST" action="{{ url_for('generate_delete_token') }}">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <button type="submit" class="btn btn-danger">Yes</button>
-        <a href="{{url_for('dashboard')}}" class="btn btn-primary">No</a>
-    </form>
-    
-     -->
