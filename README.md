@@ -4,6 +4,7 @@
 ![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)
 ![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)
 ![SQLite](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
 
 # Notevergent
 ### *Tune your own note.*
@@ -29,7 +30,8 @@ This project originated from a personal need for a clean, low-friction note trac
 | • Flask-WTF (CSRF) | • Node.js & npm  |   |
 | • Flask-Limiter | • Sass (via npx CLI) | |
 | • bcrypt | | |
-| • SQLite| | |
+| • SQLite (local)| | |
+| • PostgreSQL (Neon) |||
 
 ---
 
@@ -136,12 +138,16 @@ All architectural decisions, database modeling, security logic, and feature impl
 
 ## 🚀 Deployment
 
-Designed to be deployable on production platforms such as Render:
+> **Live Demo:** https://notevergent.vercel.app
+
+Designed to be deployable on production platforms such as Vercel + Neon:
 
 - Environment-based configuration
 - External SMTP provider (Brevo)
 - Secure secret management
 - Production-ready project structure
+- Deployed on Vercel (Frankfurt region)
+- PostgreSQL database hosted on Neon.tech
 
 ---
 
@@ -172,7 +178,8 @@ Notevergent is not designed to be a feature-heavy productivity suite. It is inte
 - pip package manager
 - Node.js (for SCSS compilation)
 - npm (Node Package Manager)
-- SQLite (for local testing)
+- SQLite (for local development only)
+- PostgreSQL via Neon.tech (for production)
 - Brevo (formerly Sendinblue) account for email delivery
   or
 - Local SMTP test server using aiosmtpd
@@ -200,7 +207,8 @@ pip install -r requirements.txt
 Create a `.env` file in the project root with the following format:
 ```
 SECRET_KEY=your_secret_key_here
-SQLALCHEMY_DATABASE_URI=sqlite:///notevergent.db
+SQLALCHEMY_DATABASE_URI=sqlite:///notevergent.db  # local development
+# For production use Neon.tech PostgreSQL connection string
 MAIL_SERVER=smtp-relay.brevo.com
 MAIL_PORT=587
 MAIL_USE_TLS=True
