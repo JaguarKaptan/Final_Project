@@ -25,7 +25,8 @@ def create_app():
 
     app.config["SESSION_PERMANENT"] = os.environ.get("SESSION_PERMANENT", "False") == "True"
     app.config["SESSION_TYPE"] = os.environ.get("SESSION_TYPE", "filesystem")
-    app.config["REMEMBER_COOKIE_DURATION"] = os.environ.get("REMEMBER_COOKIE_DURATION", "7")  # default to 7 days
+    app.config["REMEMBER_COOKIE_DURATION"] = timedelta(days=int(os.environ.get("REMEMBER_COOKIE_DURATION", "7")))
+    #app.config["REMEMBER_COOKIE_DURATION"] = os.environ.get("REMEMBER_COOKIE_DURATION", "7")  # default to 7 days
 
     # Mail Configuration
     # app.config['MAIL_SERVER'] = 'localhost'
