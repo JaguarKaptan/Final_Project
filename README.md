@@ -191,8 +191,8 @@ Notevergent is not designed to be a feature-heavy productivity suite. It is inte
 ### Installation
 ```bash
 # Clone the repository
-git clone https://github.com/JaguarKaptan/Final_Project.git
-cd Final_Project
+git clone https://github.com/JaguarKaptan/Notevergent.git
+cd Notevergent
 
 # Create a virtual environment
 python -m venv venv
