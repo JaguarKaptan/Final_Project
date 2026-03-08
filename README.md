@@ -9,6 +9,10 @@
 # Notevergent
 ### *Tune your own note.*
 
+> 🎬 Video Demo: https://www.youtube.com/watch?v=Zg2hmRojOOk
+
+> 🚀 Live Demo: https://notevergent.vercel.app/
+
 Notevergent is a security-aware, minimal note management system built with Flask. It focuses on clarity, controlled access, and traceable change history while maintaining a distraction-free interface. The name combines "Note" and "Divergent", carrying a double meaning: musical notes and written notes. The design philosophy values diversity, personal rhythm, and cognitive simplicity.
 
 ---
